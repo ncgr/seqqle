@@ -11,7 +11,7 @@ tar czf seqqle-release.tar.gz \
     seqqle/lib \
     seqqle/public \
     seqqle/Rakefile \
-    seqqle/README \
+    seqqle/README.rdoc \
     seqqle/script \
     seqqle/test \
     seqqle/vendors 
