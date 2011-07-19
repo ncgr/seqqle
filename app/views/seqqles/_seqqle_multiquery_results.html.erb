@@ -1,0 +1,23 @@
+<%= render :partial => "seqqle_urls" %>
+<table cellpadding="0" cellspacing="0">
+	<tr class="header_color">
+		<th>Query</th>
+		<th>Description</th>
+	</tr>
+	<% i = 1 %>
+	<% String.new(style = "") %>
+	<% @hits.each do |data| %>
+		<% i.modulo(2) == 0 ? style = "even" : style = "odd" %>
+		<tr class="<%= style %>">
+			<td><strong><%= get_data_by_param(:seqqle_path, data.query, data.query) %></strong></td>
+			<td>
+				<p>Hits found at: <br />
+					<span class="refs">
+						<%= data.refs.join(", ") %>
+					</span>
+				</p>
+			</td>
+		</tr>
+	<% i += 1 %>
+	<% end %>
+</table>

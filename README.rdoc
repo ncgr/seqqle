@@ -1,0 +1,112 @@
+== Seqqle
+
+Seqqle is a Ruby on Rails 2.3.11 application that accepts nucleic and amino acid sequences, executes NCBI Blast 
+and displays formatted Blast results.
+
+== Information
+
+Seqqle depends on the following:
+
+* Ruby version 1.9.2 http://www.ruby-lang.org/
+* Rails version 2.3.11 (tested under Rails 2.3.4 - 2.3.11) http://rubyonrails.org/
+* Bundler
+* MySQL http://www.mysql.com/
+* Emboss version 6.2.0 http://emboss.sourceforge.net/
+* NCBI Blastplus: Seqqle supports NCBI Blastall and Blastplus http://www.ncbi.nlm.nih.gov/
+
+=== Seqqle workflow
+
+sequences (RoR) --> store in db (RoR) --> execute run-blast (bash) --> post-process (RoR) --> display results (RoR)
+
+== Installation
+
+=== Create tmp file storage directory
+
+  mkdir RAILS_ROOT/tmp/blast_seqs
+
+=== Configure Blast settings
+
+Copy RAILS_ROOT/config/blast_settings_example/blast_settings.yml into RAILS_ROOT/config/ and
+populate the settings.
+
+  cp RAILS_ROOT/config/blast_settings_example/blast_settings.yml RAILS_ROOT/config/blast_settings.yml
+
+=== Additional Settings
+
+RAILS_ROOT/config/initializers/load_config.rb is responsible for loading Blast settings. Edit this
+file to customize your application.
+
+=== Configure your Blastall database and populate your tables
+
+Seqqle expects the following data format in your Blast database as well as the tables targets and 
+target_elements.
+
+Example FASTA header ready for blastall makeblastdb.
+  >target:target_element
+
+OR an actual example for Medicago truncatula.
+  >mt_genome_3_0:mt_3_0_chr1
+
+In our case, target equals the genome build and target_element equals chromosome location. Once the raw 
+sequence data has been reformatted, make the blastall database and add the targets and target_elements 
+to their respective tables.
+
+** Load the SQL file db/seqqle.sql into your database to view sample data. **
+
+=== Configure run-blast database directories
+
+Edit run-blast Blast database arrays.
+
+Open run-blast and search for ## Blast DB ##. Edit the following lines to match your Blast DB
+directories.
+
+NOTE: Do not change $BLAST_DB.
+
+  tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\ 
+    $BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target )
+  blastp=( $BLAST_DB/swissprot_viridiplantae )
+  blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
+	$BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target $BLAST_DB/ca_transcripts )
+  blastx=( $BLAST_DB/swissprot_viridiplantae )
+
+=== Configure destinations
+
+The destinations table handles link-outs to multiple destinations (in our case GBrowse instances) for the same
+genome. For example, we link-out to multiple Medicago truncatula GBrowse instances so our destinations table
+contains the following.
+
+* mt_genome_3_0@hapmap
+* mt_genome_3_0@jcvi
+* mt_genome_3_5_1@medicago
+
+For more information on destinations, see the Module Experts under lib.
+
+=== Configure Experts
+
+The Experts module under lib/ will need to be altered for your specific environment. Each class in this module
+contains species specific methods to process data and generate URLs to GBrowse instances. Use the classes in 
+the module as a guideline.
+
+The classes in the Experts module are called from the following files:
+
+* app/models/seqqle.rb
+* app/models/seqqle_report.rb
+
+The Expert Methods are called from the following files:
+
+* lib/experts.rb
+* lib/data_export.rb
+
+== Additional Information
+
+See the form in action.
+
+http://search.comparative-legumes.org/
+
+=== Maintained By
+
+Ken Seal (github.com/hunzinker)
+
+=== License
+
+MIT

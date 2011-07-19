@@ -1,0 +1,65 @@
+<%= render :partial => "seqqle_urls" %>
+<ul class="table">
+	<li class="header_color" style="width: 60%;">Description</li>
+	<li class="header_color" style="width: 35%;"><%= wp_sort(:seqqle_path, 'Reference', 'reference') %></li>
+</ul>
+
+<% style, i = "", 1 %>
+<% cat, toggle, k = "", "", 1 %>
+<% seq_cats = get_hit_seq_categories(@hits) %>
+<% length = @hits.length %>
+
+<% @hits.each do |data| %>
+	<% i.modulo(2) == 0 ? style = "even" : style = "odd" %>
+	<% if cat != data.sequence_category.name %>
+		<h4 class="ul-table"><%= data.sequence_category.name %></h4>
+		<% cat = data.sequence_category.name %>
+		<% k = 1 %>
+	<% else %>
+		<% k += 1 %>
+	<% end %>
+	<% if k == 6 && k < length %>
+		<% toggle = data.sequence_category.name.strip.downcase.gsub(/[ ]/, "_") %>
+		<div id="<%= toggle %>" class="accordion_toggle">
+	<% end %>
+	<ul class="table">
+		<li class="<%= style %>" style="width: 60%;">
+			<%= data.element_display_name %>.
+			<% unless data.element_url.nil? %>
+				<br />
+				Hit positions <%= link_to "#{data.hit_from}...#{data.hit_to}", data.element_url, :target => "_blank" %>
+			<% end %>
+			<% unless data.contin_url.nil? %>
+				&nbsp;&mdash;&nbsp;<%= link_to "Show related queries", data.contin_url, :target => "_blank" %>
+			<% end %>
+			<% unless data.alpheus_url.nil? %>
+				<br />
+				Hit positions <%= link_to "#{data.hit_from}...#{data.hit_to}", data.alpheus_url, :target => "_blank" %>
+			<% end %>
+			<br />
+			<strong>Hit score <%= data.bit_score %>, Percent identity <%= data.percent.round(1) %>, Alignment length <%= data.alignment_len %></strong>
+		</li>
+		<li class="<%= style %>" style="width: 35%;">
+			<% if !data.destination_url.nil? && !data.reference.nil? %>
+				<%= link_to data.reference, data.destination_url, :target => "_blank" %>
+			<% elsif !data.reference.nil? %>
+				<%= data.reference %>
+			<% else %>
+				Unknown
+			<% end %>
+		</li>
+	</ul>
+	<div style="clear: both;"></div>
+	<% if k >= 6 && (data.sequence_category.name != seq_cats[i]) %>
+		</div>
+		<p class="small_right">
+			<a id="<%= toggle %>_toggle" onclick="new Effect.Accordion('<%= toggle %>');">More Results [+]</a>
+		</p>
+	<% end %>
+	<% i += 1 %>
+<% end %>
+<div style="clear: both;"></div>
+<script type="text/javascript">
+	document.observe('dom:loaded', hideAccordions);		// Hide accordions on page load
+	document.observe('unload', hideAccordions);			// Hide accordions on page unload
+</script>

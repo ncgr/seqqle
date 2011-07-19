@@ -1,0 +1,197 @@
+/*** Form Styles ***/
+form#searchForm {
+  margin: 10px 0px 10px 0px;
+  padding: 0px;
+  font-size: 12px;
+}
+
+form#searchForm div {
+  margin: 10px 0px 10px 0px;
+}
+
+form#searchForm textarea {
+  margin: 5px 0px 5px 0px;
+  padding: 5px;
+  width: 75%;
+  height: 150px;
+  overflow: auto;
+}
+
+form#searchForm label:after {
+  content: ":";
+}
+
+form#searchForm input.submit, form#searchForm input.reset {
+  width: auto;
+}
+
+.radio-form {
+  font-size: 12px;
+}
+
+#submit, #reset {
+  font-size: 1.2em;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  color: #c34a18;
+}
+
+form#downloadDataForm {
+  margin: 10px 0px 10px 0px;
+  padding: 0px;
+  font-size: 12px;
+}
+
+form#downloadDataForm fieldset {
+  margin: 5px;
+  padding: 5px;
+}
+
+form#downloadDataForm div {
+  margin: 10px 0px 10px 0px;
+}
+
+form#downloadDataForm input.submit {
+  padding: 0 2px 0 2px;
+  width: auto;
+}
+/*** End ***/
+
+/*** Table Styles ***/
+table {
+  margin: 0;
+  padding: 10px;
+  border: 0;
+  width: 100%;
+}
+
+th {
+  white-space: nowrap;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+th, td {
+  padding: 5px;
+  text-align: left;
+}
+
+th a, a:hover {
+  text-decoration: underline;
+  border: none;
+}
+
+td {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+td.category {
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: underline;
+  letter-spacing: 0.5px;
+  height: 25px;
+}
+
+tr.header_color {
+  color: #1c140d;
+}
+
+tr.even {
+  background-color: #ffffff;
+}
+
+tr.odd {
+  background-color: #f2ede1;
+}
+/*** End ***/
+
+/*** ul Table Styles ***/
+ul.table {
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+  list-style-type: none;
+}
+
+ul.table li.header_color {
+  height: 25px;
+  float: left;
+  display: inline;
+  line-height: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  white-space: normal;
+}
+
+ul.table li.header_color a {
+  text-decoration: none;
+}
+
+ul.table li.header_color a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+ul.table li {
+  margin: 0;
+  padding: 2px 2px 2px 4px;
+  height: 55px;
+  float: left;
+  display: inline;
+  line-height: 18px;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+ul.table li.even {
+  background-color: #ffffff;
+}
+
+ul.table li.odd {
+  background-color: #f2ede1;
+}
+/*** End ***/
+
+/*** Pagination Styles ***/
+.pagination {
+  margin: 10px 0 10px 0;
+  padding: 0;
+
+  font-size: 12px;
+}
+/*** End ***/
+
+/*** Error Styles ***/
+div#errorExplanation {
+  margin: 10px 0 15px 10px;
+  padding: 0;
+  color: #0065de;
+}
+
+div#errorExplanation p, ul {
+  font-size: 14px;
+}
+
+div#error {
+  margin: 10px 0 15px 0;
+  padding: 0;
+
+  color: #0065de;
+  clear: both;
+}
+
+div#notice {
+  margin: 10px 0 15px 0;
+  padding: 0;
+
+  color: #0065de;
+  clear: both;
+}
+
+div.fieldWithErrors {
+  margin: 0;
+  padding: 0;
+}
+/*** End ***/

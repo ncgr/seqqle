@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./script/server --environment=development --port=7651 --debugger
+

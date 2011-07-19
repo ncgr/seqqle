@@ -1,0 +1,56 @@
+# Run Blast settings
+#
+# -- Settings --
+# remote: true to execute script on remote machine via
+#   Net::SSH. false to execute locally via system().
+#   See Net::SSH for more information.
+#   http://net-ssh.github.com/ssh/v2/api/index.html
+#
+# host: Net::SSH.start() host.
+#
+# user: Net::SSH.start() user.
+#
+# script: run-blast directory.
+#
+# log_dir: run-blast log file directory.
+#
+# blast_db: Blast database directory.
+#
+# threads: Blast threads.
+#
+# blast_cmd: 1 => Legacy blastall, 2 => blastplus
+#
+# num_swissprot: number of swissprot hits to show.
+#
+# paginate_results: true uses will_paginate, false 
+#   displays top 5 hits with links to More Results [+]
+#   and Close [-] when expanded.
+#
+# RAILS_ROOT/config/initializers/load_config.rb 
+# safely substitutes %{RAILS_ROOT} => RAILS_ROOT 
+# for script and log_dir.
+#
+development:
+  remote: false
+  host:
+  user:
+  script: "%{RAILS_ROOT}/bin/run-blast"
+  log_dir: "%{RAILS_ROOT}/tmp/blast_seqs/"
+  blast_db:
+  threads:
+  blast_cmd:
+  num_swissprot:
+  paginate_results: false
+
+production:
+  remote: true
+  host:
+  user:
+  script:
+  log_dir:
+  blast_db:
+  threads:
+  blast_cmd:
+  num_swissprot:
+  paginate_results: false
+

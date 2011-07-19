@@ -1,0 +1,76 @@
+<% form_for(@seqqle, :html => {:id => "searchForm", :multipart => true}) do |f| %>
+	<div>
+		<span class="radio-form">
+			Query sequences are 
+			<%= f.radio_button :seq_type, 'nucleic_acid', :checked => true %> Nucleic Acid 
+			<%= f.radio_button :seq_type, 'amino_acid' %> Peptide 
+			&nbsp;&nbsp;
+			<a id="dna">cDNA Example</a>
+			&nbsp;&nbsp;
+			<a id="peptide">Peptide Example</a>
+		</span>
+	</div>
+	<div>
+		<%= f.text_area :seq, :cols => 70, :rows => 6, :class => "blast_seq" %>
+	</div>
+	<div>
+		<%= f.file_field :seq_file %>
+	</div>
+	<div>
+		<a id="submit">Submit</a>&nbsp;&nbsp;<a id="reset">Reset</a>
+	</div>
+	<div id="spinner" style="display: none;">
+		<p><strong>Searching...</strong> <img alt="" src="/images/loading.gif" /></p>
+	</div>	
+<% end %>
+<hr />
+<div id="description">
+	<p><strong>NOTE</strong>. Seqqle looks for strong similarities to legume reference sequence sets:</p>
+	<ul>
+		<li><i>Glycine max</i> (soybean): Genome build Glyma1, </li>
+		<li><i>Lotus japonicus</i>: Genome build 2.5,</li>
+		<li><i>Medicago truncatula</i>: Genome build 3.0, Genome build 3.5.1, Affymetrix GeneChip probe sequences,</li>
+		<li><i>Cicer arietinum</i> (chickpea): transcriptome build Apr 2010,</li>
+		<li>SwissProt Viridiplantae protein sequences.</li>
+	</ul>
+	<p>Similarities are used to generate linkouts to the following LIS partner sites:</p>
+	<ul>
+		<li><a href="http://soybase.org" target="_blank">SoyBase GBrowse</a>,</li>
+		<li><a href="http://www.kazusa.or.jp/lotus" target="_blank">Kazusa Lotus japonicus GBrowse</a>,</li>
+		<li><a href="http://www.jcvi.org/cgi-bin/medicago/index.cgi" target="_blank">JCVI Medicago truncatula GBrowse</a>,</li>
+		<li><a href="http://medicagohapmap.org" target="_blank">Medicago truncatula HapMap GBrowse</a>,</li>
+		<li><a href="http://mtgea.noble.org/v2" target="_blank">Noble Foundation Medicago truncatula Gene Expression Atlas</a>,</li>
+		<li><a href="http://uniprot.org" target="_blank">UniProt</a>.</li>
+	</ul> 
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+	/** Form Events **/
+	$('dna').observe('click', addSequence);
+	$('peptide').observe('click', addSequence);
+	
+	// Hide the spinner on exit.
+	document.observe('unload', function() {
+		$('spinner').show().setStyle({display: 'none'});
+	});
+	
+	// Resets the form
+	$('reset').observe('click', function() {
+		var textInputFields = ["seqqle_seq", "seqqle_seq_file"];
+		textInputFields.each(Form.Element.clear);
+	});
+	
+	// Submits the form
+	$('submit').observe('click', function() {
+		$('spinner').show().setStyle({display: 'block'});
+		if (Prototype.Browser.IE) {
+			// This is a hack to fix animated gif display in IE *sigh*
+			$('spinner').replace('<p><strong>Searching...</strong> <img alt="" src="/images/loading.gif" /></p>');
+		}
+		Form.Element.disable('submit');
+		$('searchForm').submit();
+	});
+	/** End Events **/
+//]]>
+</script>

@@ -1,0 +1,14 @@
+<h2>Seqqle search by sequence</h2>
+<%= render :partial => "seqqle_header_results" %>
+
+<p class="right"><%= link_to 'Search Again &raquo;', root_path %></p>
+<% if @hits[0][:refs].blank? %>
+	<% if @paginate %>
+		<%= render :partial => "seqqle_results_paginated" %>
+	<% else %>
+		<%= render :partial => "seqqle_results" %>
+	<% end %>
+<% else %>
+	<%= render :partial => "seqqle_multiquery_results" %>
+<% end %>
+<p class="right"><%= link_to 'Search Again &raquo;', root_path %></p>

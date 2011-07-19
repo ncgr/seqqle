@@ -1,0 +1,7 @@
+.project
+log/*.log
+tmp/**/*
+*.log
+config/database.yml
+config/blast_settings.yml
+config/gde_settings.yml

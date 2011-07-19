@@ -1,0 +1,15 @@
+<% form_for(@file_download, :method => :get, :url => {:action => "index"}, :html => {:id => "downloadDataForm"}) do |f| %>
+	<fieldset>
+		<legend>Select</legend>
+		<span class="radio-form">
+			<div>
+				<%= f.radio_button :opts, 'gff', :checked => true %> GFF
+				<%= f.radio_button :opts, 'xml' %> XML
+				<%= f.radio_button :opts, 'json' %> JSON
+			</div>
+		</span>
+	</fieldset>
+	<div>
+		<%= f.submit "Download Data", :class => "submit" %>  
+	</div>
+<% end %>

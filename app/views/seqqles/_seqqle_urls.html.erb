@@ -1,0 +1,27 @@
+<% unless params[:query].blank? %>
+	<h3>Search Results for Query: <%= params[:query] %></h3>
+<% else %>
+	<h3>Search Results</h3>
+<% end %>
+<p>
+	<%= render :partial => "genome_view_links" %>
+	<%= link_to "Export Results", "/file_downloads/index?id=#{@seqqle.id}&filename=#{@seqqle.seq_hash}", :title => "Select Data Format", :onclick => "Modalbox.show(this.href, {title: this.title, width: 400}); return false;" %><br />
+	<% unless params[:query].blank? %>
+		<%= link_to 'Return to Results', @base_url %>
+	<% end %>
+</p>
+<div id="description">
+	<p>
+		<strong>Note: </strong>The following results will be accessible via the URLs below for <strong>one week</strong> beginning today.<br />
+		<span class="urls">
+			<% url = @base_url + ".ext" %>
+			<% unless params[:query].blank? %>
+				<% url = URI.escape(url + "?query=" + params[:query]) %>
+			<% end %>
+			<%= link_to url.sub(".ext", ""), url.sub(".ext", "") %><br />
+			<%= link_to url.sub(".ext", ".gff"), url.sub(".ext", ".gff") %><br />
+			<%= link_to url.sub(".ext", ".xml"), url.sub(".ext", ".xml") %><br />
+			<%= link_to url.sub(".ext", ".json"), url.sub(".ext", ".json") %>
+		</span>
+	</p>
+</div>
