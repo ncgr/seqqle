@@ -31,6 +31,11 @@ populate the settings.
 
   cp RAILS_ROOT/config/blast_settings_example/blast_settings.yml RAILS_ROOT/config/blast_settings.yml
 
+NOTE: 
+If you choose to execute bin/run-blast remotely via SSH, make sure the dependancies listed above 
+(Emboss, MySQL, NCBI Blast) are exported in the remote machine's .bashrc file. Otherwise
+run-blast will return error code 73 (binary not found).
+
 === Additional Settings
 
 RAILS_ROOT/config/initializers/load_config.rb is responsible for loading Blast settings. Edit this
