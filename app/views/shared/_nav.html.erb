@@ -8,14 +8,14 @@
 	<li><%= link_to "News", "#{base_url}news_articles" %></li> 
 	<li class="sep">|</li>
 	<li>
-		<a href="#" class="no_cursor">Search</a> 
+    <%= link_to "Search", "#{base_url}pages/search" %>
 		<ul class="level2"> 
 			<li><%= link_to "Seqqle search by sequence", root_path %></li> 
 		</ul> 
 	</li> 
 	<li class="sep">|</li>
 	<li>
-		<a href="#" class="no_cursor">Maps</a> 
+    <%= link_to "Maps", "#{base_url}pages/maps" %>
 		<ul class="level2"> 
 			<li><%= link_to "Comparative map views", "http://cmap.comparative-legumes.org/index.html" %></li> 
 		</ul> 
