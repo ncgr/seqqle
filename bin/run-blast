@@ -29,7 +29,7 @@ SQL_EMPTY=70
 FASTA_ERROR=71
 BINARY_ERROR=73
 
-## Script Variables ##
+## Args ##
 ID=
 HASH=
 ENV=
@@ -53,7 +53,7 @@ NA="nucleic_acid"
 ###-------------------------- Functions ----------------------------------------------###
 
 ##
-# Validate script params.
+# Validate params.
 #
 function validate_params() {
     if [[ ! $ID =~ [[:digit:]] ]]; then
@@ -119,7 +119,7 @@ function validate_params() {
 
 
 ##
-# Usage
+# Usage.
 #
 function usage() {
 cat <<-'USAGE'
@@ -201,7 +201,7 @@ function check_binaries() {
 }
 
 ##
-# Execute legacy blastall
+# Execute legacy blastall.
 #
 function execute_blastall() {
 	# Command to execute blast for amino acids.
@@ -291,7 +291,7 @@ function top_swissprot_hits() {
 }
 
 ##
-# Execute Blast Plus
+# Execute Blast plus.
 #
 function execute_blastplus() {
 	# Command to execute blast for amino acids.
@@ -393,6 +393,101 @@ function format_sql() {
     fi
 }
 
+##
+# Execute run blast.
+#
+function run_blast() {
+
+    validate_params
+
+    set_tmp_dir
+
+    check_binaries
+
+	# Dev time keeping.
+	if [ $ENV == "development" ]; then
+	    start_time=`date +%s.%N`
+	fi
+	
+	### Edit the arrays below for custom setup --------------------------------------###
+	#
+	# NOTE: Do not change $BLAST_DB.
+	#
+	## Blast DB ##
+	tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\ 
+	    $BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target )
+	blastp=( $BLAST_DB/swissprot_viridiplantae )
+	blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
+		$BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target $BLAST_DB/ca_transcripts )
+	blastx=( $BLAST_DB/swissprot_viridiplantae )
+	
+	### End Edit --------------------------------------------------------------------###
+	
+	# Query data
+	qry="SELECT seqqles.seq, seqqles.seq_type FROM seqqles WHERE id = '$ID'"
+	echo $qry | mysql --batch -h$DB_HOST -u$DB_USER -p$DB_PASS $DB > ${TMP_DIR}${HASH}
+	
+	# Make sure our SQL executed successfully.
+	if [[ ! -s ${TMP_DIR}${HASH} || $? -gt 0 ]]; then
+		EXIT_VAL=$MYSQL_ERR
+		exit_on_error
+	fi
+	
+	# Read the MySQL dataset and set the sequence type.
+	TYPE=`tail -1 ${TMP_DIR}${HASH} | awk -F"\t" '{ print $2 }'`
+	
+	if [ -z $TYPE ]; then
+		EXIT_VAL=$TYPE_ERR
+		exit_on_error
+	fi
+	
+	# Read the MySQL dataset and write the sequence to file.
+	tail -1 ${TMP_DIR}${HASH} | sed -e's/\\n/\n/g' -e's/\\r//g' | awk -F"\t" '{ print $1 }' > ${TMP_DIR}${HASH}.seq 
+	
+	# Make sure ${TMP_DIR}${HASH}.seq is set.
+	if [ ! -s ${TMP_DIR}${HASH}.seq ]; then
+		EXIT_VAL=$SEQ_EMPTY
+		exit_on_error
+	fi
+	
+	# Force FASTA format.
+	seqret -filter -sformat pearson -osformat fasta < ${TMP_DIR}${HASH}.seq > ${TMP_DIR}${HASH}.fa
+	
+	# If the FASTA sequence is not set, log the error and exit.
+	if [[ $? -gt 0 || ! -s ${TMP_DIR}${HASH}.fa ]]; then
+		EXIT_VAL=$FASTA_ERROR
+		exit_on_error
+	fi
+	
+	# Execute Blast command
+	if [ $BLAST_CMD == 1 ]; then
+		execute_blastall
+	elif [ $BLAST_CMD == 2 ]; then
+		execute_blastplus
+	fi
+	
+	# Format SQL for INSERT
+	format_sql
+	
+	# MySQL INSERT
+	mysql -h$DB_HOST -u$DB_USER -p$DB_PASS $DB < ${TMP_DIR}${HASH}.sql
+	
+	# Check MySQL INSERT
+	if [ $? -gt 0 ]; then
+		EXIT_VAL=$MYSQL_ERR
+		exit_on_error
+	fi
+	
+	rm ${TMP_DIR}${HASH}*
+	
+	# Script execution time for dev.
+	if [ $ENV == "development" ]; then
+		end_time=`date +%s.%N`
+		diff=$(echo "scale=4; $end_time-$start_time" | bc)
+		echo "$diff $TYPE $BLASTCMD" >> ${TMP_DIR}time.log
+	fi
+}
+
 ###------------------------- End Functions ------------------------------------------###
 
 
@@ -440,94 +535,7 @@ while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h' OPTION; do
 done
 shift $(($OPTIND - 1))
 
-validate_params
-
-set_tmp_dir
-
-check_binaries
-
-# Dev time keeping.
-if [ $ENV == "development" ]; then
-    start_time=`date +%s.%N`
-fi
-
-### Edit the arrays below for custom setup --------------------------------------###
-#
-# NOTE: Do not change $BLAST_DB.
-#
-## Blast DB ##
-tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\ 
-    $BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target )
-blastp=( $BLAST_DB/swissprot_viridiplantae )
-blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
-	$BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target $BLAST_DB/ca_transcripts )
-blastx=( $BLAST_DB/swissprot_viridiplantae )
-
-### End Edit --------------------------------------------------------------------###
-
-# Query data
-qry="SELECT seqqles.seq, seqqles.seq_type FROM seqqles WHERE id = '$ID'"
-echo $qry | mysql --batch -h$DB_HOST -u$DB_USER -p$DB_PASS $DB > ${TMP_DIR}${HASH}
-
-# Make sure our SQL executed successfully.
-if [[ ! -s ${TMP_DIR}${HASH} || $? -gt 0 ]]; then
-	EXIT_VAL=$MYSQL_ERR
-	exit_on_error
-fi
-
-# Read the MySQL dataset and set the sequence type.
-TYPE=`tail -1 ${TMP_DIR}${HASH} | awk -F"\t" '{ print $2 }'`
-
-if [ -z $TYPE ]; then
-	EXIT_VAL=$TYPE_ERR
-	exit_on_error
-fi
-
-# Read the MySQL dataset and write the sequence to file.
-tail -1 ${TMP_DIR}${HASH} | sed -e's/\\n/\n/g' -e's/\\r//g' | awk -F"\t" '{ print $1 }' > ${TMP_DIR}${HASH}.seq 
-
-# Make sure ${TMP_DIR}${HASH}.seq is set.
-if [ ! -s ${TMP_DIR}${HASH}.seq ]; then
-	EXIT_VAL=$SEQ_EMPTY
-	exit_on_error
-fi
-
-# Force FASTA format.
-seqret -filter -sformat pearson -osformat fasta < ${TMP_DIR}${HASH}.seq > ${TMP_DIR}${HASH}.fa
-
-# If the FASTA sequence is not set, log the error and exit.
-if [[ $? -gt 0 || ! -s ${TMP_DIR}${HASH}.fa ]]; then
-	EXIT_VAL=$FASTA_ERROR
-	exit_on_error
-fi
-
-# Execute Blast command
-if [ $BLAST_CMD == 1 ]; then
-	execute_blastall
-elif [ $BLAST_CMD == 2 ]; then
-	execute_blastplus
-fi
-
-# Format SQL for INSERT
-format_sql
-
-# MySQL INSERT
-mysql -h$DB_HOST -u$DB_USER -p$DB_PASS $DB < ${TMP_DIR}${HASH}.sql
-
-# Check MySQL INSERT
-if [ $? -gt 0 ]; then
-	EXIT_VAL=$MYSQL_ERR
-	exit_on_error
-fi
-
-rm ${TMP_DIR}${HASH}*
-
-# Script execution time for dev.
-if [ $ENV == "development" ]; then
-	end_time=`date +%s.%N`
-	diff=$(echo "scale=4; $end_time-$start_time" | bc)
-	echo "$diff $TYPE $BLASTCMD" >> ${TMP_DIR}time.log
-fi
+run_blast
 
 exit 0
 
