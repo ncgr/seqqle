@@ -53,6 +53,72 @@ NA="nucleic_acid"
 ###-------------------------- Functions ----------------------------------------------###
 
 ##
+# Validate script params.
+#
+function validate_params() {
+    if [[ ! $ID =~ [[:digit:]] ]]; then
+        echo "$(basename $0) -i expects a digit -- value received: $ID" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $HASH =~ [[:alnum:]][[:punct:]] ]]; then
+        echo "$(basename $0) -g expects a hash string -- value received: $HASH" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $ENV =~ [[:alpha:]] ]]; then
+        echo "$(basename $0) -e expects a string -- value received: $ENV" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! -d $LOG_DIR ]]; then
+        echo "$(basename $0) -l expects a dirctory -- value received: $LOG_DIR" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $DB =~ [[:alpha:]][[:punct:]] ]]; then
+        echo "$(basename $0) -d expects a string -- value received: $DB" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $DB_HOST =~ [[:alnum:]][[:punct:]] ]]; then
+        echo "$(basename $0) -k expects an IP or domain -- value received: $DB_HOST" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $DB_USER =~ [[:alpha:]][[:punct:]] ]]; then
+        echo "$(basename $0) -u expects a string -- value received: $DB_USER" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ -z $DB_PASS ]]; then
+        echo "$(basename $0) -p expects a string -- value received: $DB_PASS" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! -d $BLAST_DB ]]; then
+        echo "$(basename $0) -b expects a dirctory -- value received: $BLAST_DB" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $THREADS =~ [[:digit:]] ]]; then
+        echo "$(basename $0) -t expects a digit -- value received: $THREADS" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ $BLAST_CMD -gt 2 || $BLAST_CMD -lt 1 ]]; then
+        echo "$(basename $0) -c expects a 1 or 2 -- value received: $BLAST_CMD" >&2
+        exit $INVALID_PARAMS  
+    fi
+
+    if [[ ! $SWISSPROT =~ [[:digit:]] ]]; then
+        echo "$(basename $0) -s expects a digit -- value received: $SWISSPROT" >&2
+        exit $INVALID_PARAMS  
+    fi
+}
+
+
+##
 # Usage
 #
 function usage() {
@@ -66,7 +132,7 @@ cat <<-'USAGE'
 	 
     -i database record id          Primary ID for database lookup.
     -g hash                        Hash to ensure unique filename.
-    -e environment                 Rails environment - developemnt or production.
+    -e environment                 Rails environment - development or production.
     -l log directory               Path to log directory.
     -d database                    Name of the database.
     -k database host               IP address or domain name of database server.
@@ -75,7 +141,7 @@ cat <<-'USAGE'
     -b path to blast database      Path to Blast database.
     -t number of threads           Number of Blast threads.
     -c blast command               1 = Blastall (legacy Blast); 2 = Blastplus
-    -s number swissprot hists      Number of Swissprot hits to keep.
+    -s number swissprot hits       Number of Swissprot hits to keep.
     (-h)                           Display this message.
 
     License:
@@ -104,9 +170,9 @@ function set_tmp_dir() {
 #
 function exit_on_error() {
     LOGFILE=${TMP_DIR}run-blast.log
-	rm ${TMP_DIR}${HASH}*;
-	echo "`date`	ERROR #${EXIT_VAL}" >> $LOGFILE;
-	exit $EXIT_VAL;
+	rm ${TMP_DIR}${HASH}*
+	echo "`date`	ERROR #${EXIT_VAL}" >> $LOGFILE
+	exit $EXIT_VAL 
 }
 
 ##
@@ -332,64 +398,58 @@ function format_sql() {
 
 ###------------------------- Begin run-blast ----------------------------------------###
 
-if [ $# -ge 1 ]; then
-    # Note the leading : below.
-    while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h' OPTION; do
-        case $OPTION in
-        i)  ID="$OPTARG"
-            ;;
-        g)  HASH="$OPTARG"
-            ;;
-        e)  ENV="$OPTARG"
-            ;;
-        l)  LOG_DIR="$OPTARG"
-            ;;
-        d)  DB="$OPTARG"
-            ;;
-        k)  DB_HOST="$OPTARG"  
-            ;;
-        u)  DB_USER="$OPTARG"  
-            ;;
-        p)  DB_PASS="$OPTARG"
-            ;;
-        b)  BLAST_DB="$OPTARG"
-            ;;
-        t)  THREADS="$OPTARG"
-            ;;
-        c)  BLAST_CMD="$OPTARG"
-            ;;
-        s)  SWISSPROT="$OPTARG"
-            ;;
-        h)  usage
-            exit 0
-            ;;
-        \:) printf "argument missing from -%s option\n" $OPTARG
-            usage
-            exit $INVALID_PARAMS
-            ;;
-        \?) printf "unknown option: -%s\n" $OPTARG
-            usage
-            exit $INVALID_PARAMS
-            ;;
-        esac
-	done
+# Note the leading : below.
+while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h' OPTION; do
+    case $OPTION in
+    i)  ID="$OPTARG"
+        ;;
+    g)  HASH="$OPTARG"
+        ;;
+    e)  ENV="$OPTARG"
+        ;;
+    l)  LOG_DIR="$OPTARG"
+        ;;
+    d)  DB="$OPTARG"
+        ;;
+    k)  DB_HOST="$OPTARG"  
+        ;;
+    u)  DB_USER="$OPTARG"  
+        ;;
+    p)  DB_PASS="$OPTARG"
+        ;;
+    b)  BLAST_DB="$OPTARG"
+        ;;
+    t)  THREADS="$OPTARG"
+        ;;
+    c)  BLAST_CMD="$OPTARG"
+        ;;
+    s)  SWISSPROT="$OPTARG"
+        ;;
+    h)  usage
+        exit 0
+        ;;
+    \:) printf "argument missing from -%s option\n" $OPTARG
+        usage
+        exit $INVALID_PARAMS
+        ;;
+    \?) printf "unknown option: -%s\n" $OPTARG
+        usage
+        exit $INVALID_PARAMS
+        ;;
+    esac
+done
 shift $(($OPTIND - 1))
-else
-    echo ""
-    echo "--> All options are required! <--"
-    echo ""
-    usage
-    exit $INVALID_PARAMS
-fi
+
+validate_params
+
+set_tmp_dir
+
+check_binaries
 
 # Dev time keeping.
 if [ $ENV == "development" ]; then
     start_time=`date +%s.%N`
 fi
-
-set_tmp_dir
-
-check_binaries
 
 ### Edit the arrays below for custom setup --------------------------------------###
 #
