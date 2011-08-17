@@ -104,12 +104,12 @@ p {
   margin-left: auto;
   margin-right: auto;
   padding: 0px;
-  width: 1000px;
+  width: 995px;
 }
 
 #content {
   margin: 0;
-  padding: 0;
+  padding: 10px 0 10px 0;
   background-color: #bbd1a6;
 
   width: 100%;
@@ -119,7 +119,7 @@ p {
 }
 
 #logo {
-  margin: 10px 0 10px 15px;
+  margin: 0 0 10px 15px;
   padding: 0;
   background-image: url(../images/logo.jpg);
   background-repeat: no-repeat;
@@ -140,7 +140,7 @@ p {
 }
 
 #frame {
-  margin: 10px 15px 15px 15px;
+  margin: 10px 10px 0 15px;
   padding: 0;
 
   background-color: #efede9;
