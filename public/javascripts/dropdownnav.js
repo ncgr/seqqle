@@ -240,7 +240,7 @@ function configMenu() {
 }
 
 function initMenu() {
-	menu = new Menu('root', 'menu', configMenu);
+	menu = new Menu('dropdown', 'menu', configMenu);
 }
 
 Event.observe(window, 'load', initMenu, false);

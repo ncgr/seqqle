@@ -1,6 +1,6 @@
 <% base_url = "http://comparative-legumes.org/" %>
 
-<ul class="level1" id="root">
+<ul class="level1" id="dropdown">
 	<li><%= link_to "Home", base_url %></li> 
 	<li class="sep">|</li>
 	<li><%= link_to "About", "#{base_url}pages/about" %></li> 
@@ -11,6 +11,7 @@
     <%= link_to "Search", "#{base_url}pages/search" %>
 		<ul class="level2"> 
 			<li><%= link_to "Seqqle search by sequence", root_path %></li> 
+			<li><%= link_to "CViT search by sequence", "http://search.comparative-legumes.org/cvit/" %></li> 
 		</ul> 
 	</li> 
 	<li class="sep">|</li>
