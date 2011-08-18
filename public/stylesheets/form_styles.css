@@ -110,7 +110,7 @@ tr.odd {
 /*** ul Table Styles ***/
 ul.table {
   margin: 0;
-  padding: 10px;
+  padding: 0 10px 0 10px;
   width: 100%;
   list-style-type: none;
 }
@@ -136,7 +136,7 @@ ul.table li.header_color a:hover {
 
 ul.table li {
   margin: 0;
-  padding: 2px 2px 2px 4px;
+  padding: 4px 2px 2px 4px;
   height: 55px;
   float: left;
   display: inline;

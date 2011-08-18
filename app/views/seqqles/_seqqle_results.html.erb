@@ -1,7 +1,7 @@
 <%= render :partial => "seqqle_urls" %>
 <ul class="table">
 	<li class="header_color" style="width: 60%;">Description</li>
-	<li class="header_color" style="width: 35%;"><%= wp_sort(:seqqle_path, 'Reference', 'reference') %></li>
+	<li class="header_color" style="width: 30%;"></li>
 </ul>
 
 <% style, i = "", 1 %>
@@ -23,31 +23,29 @@
 		<div id="<%= toggle %>" class="accordion_toggle">
 	<% end %>
 	<ul class="table">
-		<li class="<%= style %>" style="width: 60%;">
+		<li class="<%= style %>" style="width: 35%;">
 			<%= data.element_display_name %>.
+			<% if !data.destination_url.nil? && !data.reference.nil? %>
+        <br /><%= link_to data.reference, data.destination_url, :target => "_blank" %>
+			<% elsif !data.reference.nil? %>
+        <br /><%= data.reference %>
+			<% else %>
+        <br />Unknown
+			<% end %>
+  	</li>
+		<li class="<%= style %>" style="width: 60%;">
 			<% unless data.element_url.nil? %>
-				<br />
 				Hit positions <%= link_to "#{data.hit_from}...#{data.hit_to}", data.element_url, :target => "_blank" %>
 			<% end %>
 			<% unless data.contin_url.nil? %>
 				&nbsp;&mdash;&nbsp;<%= link_to "Show related queries", data.contin_url, :target => "_blank" %>
 			<% end %>
 			<% unless data.alpheus_url.nil? %>
-				<br />
 				Hit positions <%= link_to "#{data.hit_from}...#{data.hit_to}", data.alpheus_url, :target => "_blank" %>
 			<% end %>
 			<br />
 			<strong>Hit score <%= data.bit_score %>, Percent identity <%= data.percent.round(1) %>, Alignment length <%= data.alignment_len %></strong>
-		</li>
-		<li class="<%= style %>" style="width: 35%;">
-			<% if !data.destination_url.nil? && !data.reference.nil? %>
-				<%= link_to data.reference, data.destination_url, :target => "_blank" %>
-			<% elsif !data.reference.nil? %>
-				<%= data.reference %>
-			<% else %>
-				Unknown
-			<% end %>
-		</li>
+    </li>
 	</ul>
 	<div style="clear: both;"></div>
 	<% if k >= 6 && (data.sequence_category.name != seq_cats[i]) %>
