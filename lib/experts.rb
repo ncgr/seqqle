@@ -27,9 +27,9 @@ module Experts
 
       data.id = nil
       for i in 0...tags.length
-        ret[i] = data.clone
-        ret[i][:hit] = tags[i]
-        ret[i][:reference] = Destination.get_name(tags[i])
+        ret[i]                        = data.clone
+        ret[i][:hit]                  = tags[i]
+        ret[i][:reference]            = Destination.get_name(tags[i])
         ret[i][:sequence_category_id] = SequenceCategory.find_by_name(seq_category[i])
       end
 

@@ -160,7 +160,7 @@ class SeqqleReport < ActiveRecord::Base
   # Displays neighbors as a continuous hit URL if the hits are on the same chromosome.
   #
   def self.get_continuous_url(url, ref, query, neighbors)
-    return nil if url.nil? || ref.nil? || query.nil? || neighbors.nil?
+    return nil if url.nil? || ref.nil? || query.nil? || neighbors.empty?
 
     # See find_neighbors for array format.
     hits = neighbors.split(',')

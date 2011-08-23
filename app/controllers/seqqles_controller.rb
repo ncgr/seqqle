@@ -169,6 +169,11 @@ class SeqqlesController < ApplicationController
       "-b #{BLAST_INFO['blast_db']} -t #{BLAST_INFO['threads']} " + 
       "-c #{BLAST_INFO['blast_cmd']} -s #{BLAST_INFO['num_swissprot']}"
 
+    # Optional args
+    if BLAST_INFO['find_neighbors_threshold']
+      cmd << " -f #{BLAST_INFO['find_neighbors_threshold']}"
+    end
+
     logger.info "\n-- run-blast command --\n" + cmd + "\n\n"
 
     if BLAST_INFO['remote']
@@ -206,16 +211,17 @@ class SeqqlesController < ApplicationController
         format_multi_queries
       else
         # Single query was entered.
-        @hits = SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page]) 
+        @hits = SeqqleReport.get_descriptions(
+          SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page])
+        )
       end 
     else
       # View the selected query form a multi-query display.
       conditions = "AND query = '#{params[:query]}'"
-      @hits = SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page], conditions)
+      @hits = SeqqleReport.get_descriptions(
+        SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page], conditions)
+      )
     end
-
-    @hits = SeqqleReport.get_descriptions(@hits)
-
     @base_url = request.url().split('?').first
 
     @cmtv_all = URI.escape(@base_url + ".gff?genomes=gm,lj,mt3.5.1&query=#{params[:query]}", "?=&,") # CMTV All genomes
@@ -237,37 +243,30 @@ class SeqqlesController < ApplicationController
   # Helper method to format @hits for multiple queries. 
   #
   def format_multi_queries
-    # Sort order is set in the post processing method. Sort order ranks each query by bit score asc.
-    conditions = "AND sort_order = 1"
-    @hits = SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page], conditions)
-
-    # We need to gather all of the references for each query to display in the view.
-    tmp = SeqqleReport.get_descriptions(SeqqleReport.get_reports_by_seqqle_id(@seqqle.id, "query ASC"))
+    @hits = SeqqleReport.get_descriptions(
+      SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page])
+    )
 
     queries, references = [], {}
 
-    # Find all of the queries and store them in an array.
-    @hits.each do |hit|
-      queries << hit.query    
-    end
-
-    # @hits db query should take care of this, but just incase.
-    queries.uniq!
+    queries = @hits.uniq { |h| h[:query] }
 
     # Loop over the queries and store all of the query specific references.
     queries.each do |q|
-      references[q] = []
-      tmp.each do |t|
-        references[q] << t[:reference] if t[:query] == q
+      references[q[:query]] = []
+      @hits.each do |h|
+        references[q[:query]] << h[:reference] if h[:query] == q[:query]
       end
     end
 
     # Store the refs for the view.
-    for i in 0...@hits.length
-      @hits[i][:refs] = references[@hits[i][:query]].uniq.sort
+    queries.each do |q|
+      q[:refs] = references[q[:query]].uniq.sort
     end
 
-    queries = references = tmp = nil
+    @hits = queries
+
+    queries = references = nil
   end
   
 end

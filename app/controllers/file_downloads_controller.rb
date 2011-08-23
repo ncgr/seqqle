@@ -20,7 +20,7 @@ class FileDownloadsController < ApplicationController
       filename = session[:filename]
       case params[:file_download][:opts]
       when "gff"
-        data = SeqqleHit.get_hits_by_seqqle_id(id)
+        data = SeqqleHit.get_hits_by_seqqle_id(id, "bit_score DESC")
         render_gff(data, filename)
       when "xml"
         data = SeqqleReport.get_descriptions(SeqqleReport.get_reports_by_seqqle_id(id))

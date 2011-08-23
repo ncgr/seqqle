@@ -19,6 +19,9 @@
 
 ###------------------------- Script Variables ----------------------------------------###
 
+## Script directory ##
+CURRENT_DIR="$(cd "$( dirname "$0" )" && pwd)"
+
 ## Error Codes ##
 INVALID_PARAMS=65
 MYSQL_ERR=66
@@ -28,6 +31,7 @@ SEQ_EMPTY=69
 SQL_EMPTY=70
 FASTA_ERROR=71
 BINARY_ERROR=73
+FIND_NEIGHBORS_ERR=74
 
 ## Args ##
 ID=
@@ -42,6 +46,7 @@ BLAST_DB=
 THREADS=
 BLAST_CMD=
 SWISSPROT=
+FIND_NEIGHBORS_THRESHOLD=
 
 ## Sequence Types ##
 AA="amino_acid"
@@ -128,7 +133,7 @@ cat <<-'USAGE'
     usage: run-blast: -i database record id -g hash -e environment 
         -l path to log file -d database -k database host -u database user
         -p database pass -b path to blast database -t number of threads 
-        -c blast command -s number swissprot hits
+        -c blast command -s number swissprot hits [-f find_neighbors threshold] 
 	 
     -i database record id          Primary ID for database lookup.
     -g hash                        Hash to ensure unique filename.
@@ -142,6 +147,9 @@ cat <<-'USAGE'
     -t number of threads           Number of Blast threads.
     -c blast command               1 = Blastall (legacy Blast); 2 = Blastplus
     -s number swissprot hits       Number of Swissprot hits to keep.
+    -f find_neighbors threshold    Max nummber of base pairs between neighbors.
+                                   Defaults to 10,000. See find_neighbors.rb for
+                                   more information.
     (-h)                           Display this message.
 
     License:
@@ -170,7 +178,7 @@ function set_tmp_dir() {
 #
 function exit_on_error() {
     LOGFILE=${TMP_DIR}run-blast.log
-	rm ${TMP_DIR}${HASH}*
+	#rm ${TMP_DIR}${HASH}*
 	echo "`date`	ERROR #${EXIT_VAL}" >> $LOGFILE
 	exit $EXIT_VAL 
 }
@@ -368,10 +376,10 @@ function format_sql() {
 	# If the query was not set in the FASTA header, print Local or leave it alone.
 	# All commas must be replaced in query (see gsub below) because the method  find_neighbors
 	# on the Rails side (see seqqles_controller.rb) splits neighbors and query via a comma.
-	cat ${TMP_DIR}${HASH}.rep | awk '{
+	cat ${TMP_DIR}${HASH}.fn | awk '{
 		{ 
 			print "INSERT into seqqle_hits (seqqle_id, query, hit, percent, alignment_len, \
-			query_from, query_to, hit_from, hit_to, e_val, bit_score) values ('$ID',"; 
+			query_from, query_to, hit_from, hit_to, e_val, bit_score, neighbors) values ('$ID',"; 
 		} 
 		{ 
 			gsub(/[,]/, "-", $1);
@@ -379,7 +387,8 @@ function format_sql() {
 				$1 = "Local" 
 		}
 		{ 
-			printf "\"%s\", \"%s\", %.2f, %d, %d, %d, %d, %d, %d, %d", $1, $2, $3, $4, $7, $8, $9, $10, $11, $12 
+			printf "\"%s\", \"%s\", %.2f, %d, %d, %d, %d, %d, %d, %d, \"%s\"", \
+                $1, $2, $3, $4, $7, $8, $9, $10, $11, $12, $13
 		}
 		{ 
 			print ");"; 
@@ -466,6 +475,20 @@ function run_blast() {
 		execute_blastplus
 	fi
 	
+    # Sort results for find_neighbors
+    sort -t$'\t' -k2 ${TMP_DIR}${HASH}.rep > ${TMP_DIR}${HASH}.sorted
+
+    # Find neighbors
+    ruby ${CURRENT_DIR}/find_neighbors.rb ${TMP_DIR}${HASH}.sorted $FIND_NEIGHBORS_THRESHOLD
+
+    wait $!
+
+	# Log the error and exit.
+	if [[ $? -gt 0 || ! -s ${TMP_DIR}${HASH}.fn ]]; then
+		EXIT_VAL=$FIND_NEIGHBORS_ERR
+		exit_on_error
+	fi
+
 	# Format SQL for INSERT
 	format_sql
 	
@@ -519,6 +542,8 @@ while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h' OPTION; do
     c)  BLAST_CMD="$OPTARG"
         ;;
     s)  SWISSPROT="$OPTARG"
+        ;;
+    f)  FIND_NEIGHBORS_THRESHOLD="$OPTARG"
         ;;
     h)  usage
         exit 0

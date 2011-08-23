@@ -26,15 +26,17 @@ class SeqqleHit < ActiveRecord::Base
   #
   def self.get_hits_for_gff_by_params(id, genomes = nil, query = nil)
     return nil unless id > 0
+  
+    order = "bit_score DESC"
 
     if genomes.blank? && query.blank?
-      return get_hits_by_seqqle_id(id)
+      return get_hits_by_seqqle_id(id, order)
     end
     if query.blank?
-      results = find(:all, :conditions => {:seqqle_id => id})
+      results = find(:all, :conditions => {:seqqle_id => id}, :order => order)
     else
       conditions = ["seqqle_id = ? AND query = ?", id, query]
-      results = find(:all, :conditions => conditions)
+      results = find(:all, :conditions => conditions, :order => order)
     end
     ret = results
 

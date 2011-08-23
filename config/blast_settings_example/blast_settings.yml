@@ -26,6 +26,10 @@
 #   displays top 5 hits with links to More Results [+]
 #   and Close [-] when expanded.
 #
+# find_neighbors_threshold: Max number of base pairs
+#   between hits on the same species chromosome
+#   for neighbors. Defaults to 10,000
+#
 # RAILS_ROOT/config/initializers/load_config.rb 
 # safely substitutes %{RAILS_ROOT} => RAILS_ROOT 
 # for script and log_dir.
@@ -41,6 +45,7 @@ development:
   blast_cmd:
   num_swissprot:
   paginate_results: false
+  find_neighbors_threshold: 
 
 production:
   remote: true
@@ -53,4 +58,5 @@ production:
   blast_cmd:
   num_swissprot:
   paginate_results: false
+  find_neighbors_threshold: 
 

@@ -2,7 +2,6 @@
 class Seqqle < ActiveRecord::Base
 
   include Experts
-  include Utilities
 
   has_many :seqqle_hits, :dependent => :destroy
   has_many :seqqle_reports, :dependent => :destroy
@@ -30,6 +29,7 @@ class Seqqle < ActiveRecord::Base
     71 => "Unknown sequence format. Please use FASTA.",
     72 => "Please enter your sequence(s) in Plain Text as FASTA.",
     73 => "Your search returned error code 73.",
+    74 => "Your search returned error code 74.",
     75 => "Your search returned error code 75."
   }.freeze
 
@@ -45,9 +45,6 @@ class Seqqle < ActiveRecord::Base
     "ca" => "Cicer arietinum",
     "sw" => "Viridiplantae"         # sw is for swissprot not a species.
   }.freeze
-
-  # Find neighbors threshold
-  THRESHOLD = 10000
 
   #
   # Find Blasts by sequence hash.
@@ -65,10 +62,7 @@ class Seqqle < ActiveRecord::Base
     report = SeqqleReport.new
 
     # Raw data.
-    data = SeqqleHit.get_hits_by_seqqle_id(id, "query, bit_score DESC")
-
-    # Find neighboring hits on the chromosome.
-    find_neighbors(data, THRESHOLD)
+    data = SeqqleHit.get_hits_by_seqqle_id(id, "query, hit ASC")
 
     order = 1
     query = data[0][:query]
@@ -111,19 +105,6 @@ class Seqqle < ActiveRecord::Base
         res[k].attributes.each do |key, val|
           next if key == "id"
           report[key] = val
-        end
-
-        # Populates the sort order of each hit by query. 
-        # Sort order ranks each hit by bit sore asc.
-        if count > 1
-          if query == data[i][:query]
-            report[:sort_order] = order
-          else
-            query = data[i][:query]
-            order = 1
-            report[:sort_order] = order
-          end
-          order += 1
         end
         report.save
         report = SeqqleReport.new
