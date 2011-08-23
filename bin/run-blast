@@ -20,7 +20,7 @@
 ###------------------------- Script Variables ----------------------------------------###
 
 ## Script directory ##
-CURRENT_DIR="$(cd "$( dirname "$0" )" && pwd)"
+CURRENT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 ## Error Codes ##
 INVALID_PARAMS=65
@@ -120,6 +120,13 @@ function validate_params() {
         echo "$(basename $0) -s expects a digit -- value received: $SWISSPROT" >&2
         exit $INVALID_PARAMS  
     fi
+
+    if [[ -n $FIND_NEIGHBORS_THRESHOLD ]]; then 
+        if [[ ! $FIND_NEIGHBORS_THRESHOLD =~ [[:digit:]] ]]; then
+            echo "$(basename $0) -f expects a digit -- value received: $FIND_NEIGHBORS_THRESHOLD" >&2
+            exit $INVALID_PARAMS 
+        fi
+    fi
 }
 
 
@@ -178,7 +185,7 @@ function set_tmp_dir() {
 #
 function exit_on_error() {
     LOGFILE=${TMP_DIR}run-blast.log
-	#rm ${TMP_DIR}${HASH}*
+	rm ${TMP_DIR}${HASH}*
 	echo "`date`	ERROR #${EXIT_VAL}" >> $LOGFILE
 	exit $EXIT_VAL 
 }
@@ -376,7 +383,7 @@ function format_sql() {
 	# If the query was not set in the FASTA header, print Local or leave it alone.
 	# All commas must be replaced in query (see gsub below) because the method  find_neighbors
 	# on the Rails side (see seqqles_controller.rb) splits neighbors and query via a comma.
-	cat ${TMP_DIR}${HASH}.fn | awk '{
+	cat ${TMP_DIR}${HASH}.neighbors | awk '{
 		{ 
 			print "INSERT into seqqle_hits (seqqle_id, query, hit, percent, alignment_len, \
 			query_from, query_to, hit_from, hit_to, e_val, bit_score, neighbors) values ('$ID',"; 
@@ -484,7 +491,7 @@ function run_blast() {
     wait $!
 
 	# Log the error and exit.
-	if [[ $? -gt 0 || ! -s ${TMP_DIR}${HASH}.fn ]]; then
+	if [[ $? -gt 0 || ! -s ${TMP_DIR}${HASH}.neighbors ]]; then
 		EXIT_VAL=$FIND_NEIGHBORS_ERR
 		exit_on_error
 	fi
@@ -517,7 +524,7 @@ function run_blast() {
 ###------------------------- Begin run-blast ----------------------------------------###
 
 # Note the leading : below.
-while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h' OPTION; do
+while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h:f:' OPTION; do
     case $OPTION in
     i)  ID="$OPTARG"
         ;;

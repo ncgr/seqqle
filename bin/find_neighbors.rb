@@ -209,7 +209,7 @@ class FindNeighbors
   # Write results to file.
   #
   def write_results_to_file
-    file = @file.gsub(/\.\w+/, '.fn')
+    file = @file.gsub(/\.\w+/, '.neighbors')
     File.open(file, "w+") do |f|
       @data.each { |d| f << d + "\n" }
     end
