@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.integer   "hit_to"
     t.string    "e_val"
     t.integer   "bit_score"
+    t.text      "neighbors"
     t.timestamp "timestamp",     :null => false
   end
 
@@ -56,7 +57,6 @@ ActiveRecord::Schema.define(:version => 0) do
     t.integer   "bit_score"
     t.text      "neighbors"
     t.integer   "ref_id"
-    t.integer   "sort_order"
     t.timestamp "timestamp",            :null => false
   end
 
