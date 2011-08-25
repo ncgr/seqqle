@@ -46,7 +46,7 @@ class FindNeighbors
 
   #
   # Parse the array of arrays to find the range of indecies for 
-  # Array#values_at.
+  # Array#values_at. Data passed to parse_data is pre sorted on @hit.
   #
   def parse_data
     hit        = nil
@@ -55,6 +55,8 @@ class FindNeighbors
     for i in 0...@data.length
       @data[i].chomp!
       line = @data[i].split('	')
+      # If the hit is to a genome, add the array indecies to @values_at 
+      # or append a tab to the line.
       if is_hit_to_genome?(line[1].split(':').last)
         if line[1].split(':').last != hit
           hit = line[1].split(':').last
@@ -69,7 +71,14 @@ class FindNeighbors
         line << "\t"
       end
     end
-    execute_find_neighbors
+
+    # In this case, Ruby 1.9 threads do not spawn a native thread. Instead,
+    # they execute in the main thread so we can bypass the
+    # execute_find_neighbors helper.
+    # TODO: Test using JRuby.
+    spawn_threads(@values_at)
+    
+    #execute_find_neighbors
     write_results_to_file
   end
 
