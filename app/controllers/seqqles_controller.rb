@@ -3,23 +3,14 @@ class SeqqlesController < ApplicationController
 
   include DataExport
 
-  #
-  # Redirect to new.
-  #
   def index
     redirect_to :action => "new"
   end
 
-  #
-  # Create a new Seqqle form.
-  #
   def new
     @seqqle = Seqqle.new
   end
 
-  #
-  # Creates @seqqle object and executes blast.
-  #
   def create
     @seqqle = Seqqle.new(params[:seqqle])
 
@@ -78,9 +69,6 @@ class SeqqlesController < ApplicationController
     redirect_to seqqle_path(@seqqle.seq_hash)
   end
 
-  #
-  # Displays search results.
-  #
   def show
     @seqqle = Seqqle.find_seq_hash(params[:id])
     @hits = {}

@@ -5,25 +5,16 @@ require 'experts'
 
 module DataExport
 
-  #
-  # Generates proper HTML header for GFF file.
-  #
   def render_gff(data, filename)
     filename += '.gff' if File.extname(filename).empty?
     send_data(write_gff(data), :filename => filename, :type => "text/plain", :disposition => "attachment")
   end
 
-  #
-  # Generates proper HTML header for XML file.
-  #
   def render_xml(data, filename)
     filename += '.xml' if File.extname(filename).empty?
     send_data(data.to_xml, :filename => filename, :type => "application/xml", :disposition => "attachment")
   end
 
-  #
-  # Generates proper HTML header for JSON file.
-  #
   def render_json(data, filename)
     filename += '.json' if File.extname(filename).empty?
     send_data(data.to_json, :filename => filename, :type => "application/json", :disposition => "attachment")

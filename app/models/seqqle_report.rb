@@ -85,8 +85,8 @@ class SeqqleReport < ActiveRecord::Base
   # and create another method to generate the URL.
   #
   def self.format_description(data)
-    hit = data.hit.split(':')
-    tag = hit.first
+    hit         = data.hit.split(':')
+    tag         = hit.first
     tag_element = hit.last
 
     Destination.first(:conditions => {:tag => tag}, :select => DESTINATION_DATA.join(", ")).attributes.each do |key, val|
@@ -98,7 +98,7 @@ class SeqqleReport < ActiveRecord::Base
 
     # Split the tag_element and gather the necessary pieces.
     pieces = tag_element.split('_') # this should become a new emoticon! ('_')
-    ref = pieces.last
+    ref    = pieces.last
 
     # If scaffold is present in tag_element, add it to ref.
     # See TargetElement for more information.
@@ -109,7 +109,7 @@ class SeqqleReport < ActiveRecord::Base
     end
 
     hit_from = data.hit_from.to_i
-    hit_to = data.hit_to.to_i
+    hit_to   = data.hit_to.to_i
 
     # Expand the viewing interval while retaining the orientation
     if (hit_from <= hit_to)
@@ -164,8 +164,8 @@ class SeqqleReport < ActiveRecord::Base
 
     # See find_neighbors for array format.
     hits = neighbors.split(',')
-    hsh = {}
-    add = ""
+    hsh  = {}
+    add  = ""
 
     i = 0
     until i >= hits.length

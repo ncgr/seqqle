@@ -47,7 +47,7 @@ class Seqqle < ActiveRecord::Base
   }.freeze
 
   #
-  # Find Blasts by sequence hash.
+  # Find by sequence hash.
   #
   def self.find_seq_hash(hash)
     # Sanitize the supplied URL for db loookup.
@@ -70,9 +70,6 @@ class Seqqle < ActiveRecord::Base
     for i in 0...data.length
       tag = data[i][:hit].split(':').first
 
-      # Default sort order value.
-      data[i][:sort_order] = nil
-
       # Add the species.
       data[i][:species] = SPECIES[tag.slice(0, 2)]
 
@@ -81,8 +78,7 @@ class Seqqle < ActiveRecord::Base
 
       res = {}
 
-      # Pass the pre processed data off to the experts. Each experts clones the data set and
-      # returns the cloned data as well as any additional information.
+      # Pass the pre processed data off to the experts.
       # See lib/experts.rb for more information.
       case tag
       when "mt_genome_3_0"

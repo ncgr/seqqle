@@ -17,8 +17,8 @@ module Experts
   module ExpertMethods
 
     #
-    # Processes data set by cloning original data, and appending tags and seq_category to
-    # cloned data set. Reference is generated via the destinations table in the db.
+    # Processes data set and appends tags and seq_categories. Reference is 
+    # generated via the destinations table in the db.
     #
     def process_data(data, tags = [], seq_category = [])
       return data if data.blank? || tags.blank? || seq_category.blank?
@@ -37,7 +37,8 @@ module Experts
     end
 
     #
-    # Format and return ref for URL. Some gbrowse instances require leading zeros and others don't.
+    # Format and return ref for URL. Some gbrowse instances require leading zeros while
+    # others do not.
     # Ex: ref=chr08 vs ref=chr8
     # 
     def format_ref(ref, type)

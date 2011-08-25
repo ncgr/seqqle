@@ -381,8 +381,8 @@ function check_blast_results() {
 function format_sql() {
 	# More awk goodness to convert the blast results to SQL. Nerd cred rising.
 	# If the query was not set in the FASTA header, print Local or leave it alone.
-	# All commas must be replaced in query (see gsub below) because the method  find_neighbors
-	# on the Rails side (see seqqles_controller.rb) splits neighbors and query via a comma.
+	# All commas must be replaced in query (see gsub below) because the script find_neighbors
+	# splits neighbors and query via a comma.
 	cat ${TMP_DIR}${HASH}.neighbors | awk '{
 		{ 
 			print "INSERT into seqqle_hits (seqqle_id, query, hit, percent, alignment_len, \
@@ -523,7 +523,6 @@ function run_blast() {
 
 ###------------------------- Begin run-blast ----------------------------------------###
 
-# Note the leading : below.
 while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h:f:' OPTION; do
     case $OPTION in
     i)  ID="$OPTARG"
