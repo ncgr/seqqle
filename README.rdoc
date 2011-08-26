@@ -8,6 +8,7 @@ and displays formatted Blast results.
 Seqqle depends on the following:
 
 * Ruby version 1.9.2 http://www.ruby-lang.org/
+* JRuby version 1.6.4 http://jruby.org/ (tested under v1.6.4)
 * Rails version 2.3.11 (tested under Rails 2.3.4 - 2.3.11) http://rubyonrails.org/
 * Bundler
 * MySQL http://www.mysql.com/

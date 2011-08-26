@@ -72,13 +72,9 @@ class FindNeighbors
       end
     end
 
-    # In this case, Ruby 1.9 threads do not spawn a native thread. Instead,
-    # they execute in the main thread so we can bypass the
-    # execute_find_neighbors helper.
-    # TODO: Test using JRuby.
+    # Bypass execute_find_neighbors helper.
     spawn_threads(@values_at)
     
-    #execute_find_neighbors
     write_results_to_file
   end
 

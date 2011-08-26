@@ -194,17 +194,17 @@ function exit_on_error() {
 # Make sure the user has the necessary binaries installed and accessible.
 #
 function check_binaries() {
-    binaries=( seqret mysql blastall tblastn blastp blastn blastx )
+    binaries=( seqret mysql jruby blastall tblastn blastp blastn blastx )
     
     # Check binaries per blast cmd.
     if [ $BLAST_CMD == 1 ]; then
-        unset binaries[3]
         unset binaries[4]
         unset binaries[5]
         unset binaries[6]
+        unset binaries[7]
     fi
     if [ $BLAST_CMD == 2 ]; then
-        unset binaries[2]
+        unset binaries[3]
     fi
 
     for b in $binaries; do
@@ -486,7 +486,7 @@ function run_blast() {
     sort -t$'\t' -k2 ${TMP_DIR}${HASH}.rep > ${TMP_DIR}${HASH}.sorted
 
     # Find neighbors
-    ruby ${CURRENT_DIR}/find_neighbors.rb ${TMP_DIR}${HASH}.sorted $FIND_NEIGHBORS_THRESHOLD
+    jruby --1.9 ${CURRENT_DIR}/find_neighbors.rb ${TMP_DIR}${HASH}.sorted $FIND_NEIGHBORS_THRESHOLD
 
     wait $!
 
