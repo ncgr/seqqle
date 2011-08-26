@@ -28,11 +28,11 @@ module DataExport
 
     extend Experts::ExpertMethods
 
-    gff = "##gff-version 3\n"
+    gff    = "##gff-version 3\n"
     source = "."
-    type = "match"
+    type   = "match"
     strand = ""
-    phase = "."
+    phase  = "."
 
     for i in 0...data.length
       start, stop = data[i].hit_from, data[i].hit_to
@@ -40,15 +40,15 @@ module DataExport
       start, stop = format_start_stop(data[i].hit_from, data[i].hit_to)   # Format start and stop
 
       hit_info = data[i].hit.split(':')
-      build = hit_info.first
-      hit = hit_info.last
+      build    = hit_info.first
+      hit      = hit_info.last
 
-      eval = data[i].e_val
-      query = data[i].query
+      e_val      = data[i].e_val
+      query      = data[i].query
       query_from = data[i].query_from
-      query_to = data[i].query_to
+      query_to   = data[i].query_to
 
-      str =  "#{hit}\t#{source}\t#{type}\t#{start}\t#{stop}\t#{eval}\t#{strand}\t#{phase}\t" + 
+      str =  "#{hit}\t#{source}\t#{type}\t#{start}\t#{stop}\t#{e_val}\t#{strand}\t#{phase}\t" + 
              "Target=#{query} #{query_from} #{query_to};Note=Build #{build};Name=#{query}\n"
       gff << str
     end
