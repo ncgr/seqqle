@@ -523,7 +523,7 @@ function run_blast() {
 
 ###------------------------- Begin run-blast ----------------------------------------###
 
-while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:h:f:' OPTION; do
+while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:hf:' OPTION; do
     case $OPTION in
     i)  ID="$OPTARG"
         ;;
