@@ -376,13 +376,14 @@ function check_blast_results() {
 }
 
 ##
-# Format SQL for db INSERT.
+# Format and INSERT data.
 #
-function format_sql() {
-	# More awk goodness to convert the blast results to SQL. Nerd cred rising.
-	# If the query was not set in the FASTA header, print Local or leave it alone.
-	# All commas must be replaced in query (see gsub below) because the script find_neighbors
-	# splits neighbors and query via a comma.
+# If the query was not set in the FASTA header, print Local or leave it alone.
+# All commas must be replaced in query (see gsub below) because the script find_neighbors
+# splits neighbors and query via a comma.
+#
+function format_and_insert_data() {
+
 	cat ${TMP_DIR}${HASH}.neighbors | awk '{
 		{ 
 			print "INSERT into seqqle_hits (seqqle_id, query, hit, percent, alignment_len, \
@@ -400,13 +401,8 @@ function format_sql() {
 		{ 
 			print ");"; 
 		}
-	}' >> ${TMP_DIR}${HASH}.sql
+	}' | mysql -h$DB_HOST -u$DB_USER -p$DB_PASS $DB
 
-    # Return if SQL is empty and log the error.
-    if [ ! -s ${TMP_DIR}${HASH}.sql ]; then
-	    EXIT_VAL=$SQL_EMPTY
-	    exit_on_error
-    fi
 }
 
 ##
@@ -496,17 +492,8 @@ function run_blast() {
 		exit_on_error
 	fi
 
-	# Format SQL for INSERT
-	format_sql
-	
-	# MySQL INSERT
-	mysql -h$DB_HOST -u$DB_USER -p$DB_PASS $DB < ${TMP_DIR}${HASH}.sql
-	
-	# Check MySQL INSERT
-	if [ $? -gt 0 ]; then
-		EXIT_VAL=$MYSQL_ERR
-		exit_on_error
-	fi
+	# Format and INSERT data.
+	format_and_insert_data
 	
 	rm ${TMP_DIR}${HASH}*
 	
@@ -523,7 +510,7 @@ function run_blast() {
 
 ###------------------------- Begin run-blast ----------------------------------------###
 
-while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:hf:' OPTION; do
+while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:f:h' OPTION; do
     case $OPTION in
     i)  ID="$OPTARG"
         ;;
