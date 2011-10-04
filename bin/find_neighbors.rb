@@ -103,6 +103,7 @@ class FindNeighbors
 
     # To use recursion or not to use recursion?
     if num_cmds > limit
+      @increment = limit # spwan_threads_in_batch increment value.
       spawn_threads_in_batch(0, limit, @values_at)		
     else
       spawn_threads(@values_at)
@@ -116,7 +117,7 @@ class FindNeighbors
     values = arr.values_at(start...limit)
     return if values.empty?
     spawn_threads(values)
-    spawn_threads_in_batch(limit, limit + limit, arr)
+    spawn_threads_in_batch(limit, limit + @increment, arr)
   end
 
   #
