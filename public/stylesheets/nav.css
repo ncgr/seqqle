@@ -99,7 +99,7 @@
   float: none;
   margin: 0;
   padding: 0;
-  width: 200px;
+  width: auto;
 }
 
 #dropdown ul.level2 li a, #dropdown ul.level3 li a {
