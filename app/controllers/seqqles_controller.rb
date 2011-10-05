@@ -24,7 +24,7 @@ class SeqqlesController < ApplicationController
 
     # File upload.
     if !@seqqle.seq_file.blank? && (File.exists? params[:seqqle][:seq_file])
-      @seqqle.seq = read_uploaded_file(params[:seqqle][:seq_file])
+      @seqqle.seq = params[:seqqle][:seq_file].read
       @seqqle.seq_file = nil
     end
 
@@ -111,33 +111,6 @@ class SeqqlesController < ApplicationController
   end
 
   private
-
-  #
-  # Reads the contents of an uploaded file and return it as a string.
-  #
-  def read_uploaded_file(file)
-    contents = ""
-
-    # This might be overkill, but ...
-    name = file.original_filename   # Filename
-    name.strip!                     # Sanitize the filename
-    name.gsub! /[^\w\.\-]/, '_'     # Replace all non alphanumeric chars with underscore. 
-
-    # Write the file to our tmp dir.
-    File.open("#{Seqqle::DIR}#{name}", 'w') do |f| 
-      f.write(file.read) 
-    end 
-
-    # Read the contents of the file into an array.
-    File.open("#{Seqqle::DIR}#{name}", 'r') do |f|
-      contents << f.read    
-    end
-
-    # Remove the file.
-    File.delete "#{Seqqle::DIR}#{name}"
-
-    contents
-  end
 
   #
   # Executes blast on a given dataset based on sequence type. 
