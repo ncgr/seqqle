@@ -426,11 +426,14 @@ function run_blast() {
 	# NOTE: Do not change $BLAST_DB.
 	#
 	## Blast DB ##
-	tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
-	    $BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target )
+	tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome\
+        $BLAST_DB/mt_3_5_1_genome $BLAST_DB/lj_genome\
+        $BLAST_DB/mt_affy_genechip_target $BLAST_DB/cc_genome )
 	blastp=( $BLAST_DB/swissprot_viridiplantae )
-	blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
-		$BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target $BLAST_DB/ca_transcripts )
+	blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome\
+        $BLAST_DB/mt_3_5_1_genome $BLAST_DB/lj_genome\
+        $BLAST_DB/mt_affy_genechip_target $BLAST_DB/ca_transcripts\
+        $BLAST_DB/cc_genome )
 	blastx=( $BLAST_DB/swissprot_viridiplantae )
 
 	### End Edit --------------------------------------------------------------------###

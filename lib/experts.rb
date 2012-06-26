@@ -62,6 +62,12 @@ module Experts
         end
       when "hapmap"
         return ref.gsub(/0/, '')
+      when "cajca"
+        if ref =~ /CcLG[0-9]+/
+          return "Cc#{ref.slice(/[0-9]+/)}"
+        else
+          return ref
+        end
       end
       ref
     end
@@ -307,6 +313,43 @@ module Experts
     def self.get_ca_alpheus_url(ref_id)
       url = "http://bone.ncgr.org/transcript-detail.do?rst_id=#{ref_id}"
     end
+  end
+
+  #
+  # Cajanus cajan
+  #
+  class Cc
+
+    extend ExpertMethods
+
+    #
+    # Process the blast hit data for Cc. Add each unique site to link out to in the tags array.
+    # Note: seq_cat array index corresponds to the index of tag.
+    #
+    def self.process_cc_data(data)
+      return data if data.blank?
+
+      hits = data[:hit].split(':')
+      tags = ["#{hits[0]}@lis:#{hits[1]}"]
+      seq_cat = [SEQUENCE_CATEGORIES[:gc]]
+
+      process_data(data, tags, seq_cat)
+    end
+
+    #
+    # Format url for Cajanus cajan build 1.0.
+    #
+    def self.get_cc_url(ref, display_a, display_b, hit_from, hit_to, query)
+      ref = format_ref(ref, "cajca")
+
+      # gbrowse instance will not display our custom LIS Query track if start > stop.
+      start, stop = format_start_stop(display_a, display_b)
+
+      url = "http://cajca.comparative-legumes.org/gb2/gbrowse/current/?ref=#{ref};start=#{start};" +
+            "stop=#{stop};width=1024;version=100;flip=0;grid=1;" +
+            "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
+    end
+
   end
 
 end

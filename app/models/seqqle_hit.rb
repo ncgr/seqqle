@@ -10,6 +10,7 @@ class SeqqleHit < ActiveRecord::Base
     "mt3.0" => /mt_3_0_chr[0-9]/,
     "mt3.5.1" => /mt_3_5_1_chr[0-9]/,
     "lj" => /lj_chr[0-9]/,
+    "cc" => /CcLG[0-9]+/,
     "all" => /./
   }.freeze
 

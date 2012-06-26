@@ -16,7 +16,8 @@ class FindNeighbors
     /gm[0-9]+/,
     /mt_3_0_chr[0-9]/,
     /mt_3_5_1_chr[0-9]/,
-    /lj_chr[0-9]/
+    /lj_chr[0-9]/,
+    /CcLG[0-9]+/
   ]
 
   def initialize(args)

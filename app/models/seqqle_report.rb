@@ -153,6 +153,9 @@ class SeqqleReport < ActiveRecord::Base
       data[:element_url] = Swissprot.get_swissprot_url(ref)
     when "ca_transcripts_201006@alpheus"
       data[:alpheus_url] = Ca.get_ca_alpheus_url(data.ref_id)
+    when "cc_genome_1_0@lis"
+      data[:element_url] = Cc.get_cc_url(ref, display_a, display_b, hit_from, hit_to, query)
+      data[:contin_url]  = get_continuous_url(data[:element_url], ref, query, neighbors)
     end
   end
 
