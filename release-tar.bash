@@ -14,5 +14,5 @@ tar czf seqqle-release.tar.gz \
     seqqle/README.rdoc \
     seqqle/script \
     seqqle/test \
-    seqqle/vendors 
+    seqqle/vendors
 

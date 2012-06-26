@@ -1,6 +1,6 @@
 #
 # Application Rake Tasks
-# 
+#
 namespace :db_cleaning do
   desc "Delete week old seqqles, seqqle hits and seqqle reports in the database."
   task :delete_seqqles => :environment do

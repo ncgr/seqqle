@@ -17,7 +17,7 @@ module Experts
   module ExpertMethods
 
     #
-    # Processes data set and appends tags and seq_categories. Reference is 
+    # Processes data set and appends tags and seq_categories. Reference is
     # generated via the destinations table in the db.
     #
     def process_data(data, tags = [], seq_category = [])
@@ -40,7 +40,7 @@ module Experts
     # Format and return ref for URL. Some gbrowse instances require leading zeros while
     # others do not.
     # Ex: ref=chr08 vs ref=chr8
-    # 
+    #
     def format_ref(ref, type)
       len = ref.length
       case type
@@ -49,7 +49,7 @@ module Experts
           chr = ref.slice(2, len)
           return "gm0#{chr}"
         end
-      when "jcvi" 
+      when "jcvi"
         if len < 5
           chr = ref.slice(3, len)
           return "chr0#{chr}"
@@ -67,7 +67,7 @@ module Experts
     end
 
     #
-    # Reverse start and stop if necessary. Certain gbrowse instances do not 
+    # Reverse start and stop if necessary. Certain gbrowse instances do not
     # render properly if start > stop.
     #
     def format_start_stop(start, stop)
@@ -117,7 +117,7 @@ module Experts
     end
 
     #
-    # Process the blast hit data for Mt Gene Expression Atlas data. Add each unique site to 
+    # Process the blast hit data for Mt Gene Expression Atlas data. Add each unique site to
     # link out to in the tags array.
     # Note: seq_cat array index corresponds to the index of tag.
     #
@@ -136,13 +136,13 @@ module Experts
     #
     def self.get_mt_jcvi_url(ref, display_a, display_b, hit_from, hit_to, query)
       ref = format_ref(ref, "jcvi")
-      url = "http://gbrowse.jcvi.org/cgi-bin/gbrowse/medicago/?ref=#{ref};start=#{display_a};" + 
-            "stop=#{display_b};width=1024;version=100;cache=on;drag_and_drop=on;show_tooltips=on;grid=on;" + 
-            "label=Gene-Transcripts_all-Transcripts_Bud-Transcripts_Blade-Transcripts_Root-Transcripts_Flower" + 
-            "-Transcripts_Seed-Transcripts_mtg-Gene_Models-mt_fgenesh-genemarkHMM-genscan-fgenesh-TC_poplar" + 
-            "-TC_maize-TC_arabidopsis-TC_Lotus-TC_soybean-TC_cotton-TC_medicago-TC_rice-TC_sorghum;" + 
+      url = "http://gbrowse.jcvi.org/cgi-bin/gbrowse/medicago/?ref=#{ref};start=#{display_a};" +
+            "stop=#{display_b};width=1024;version=100;cache=on;drag_and_drop=on;show_tooltips=on;grid=on;" +
+            "label=Gene-Transcripts_all-Transcripts_Bud-Transcripts_Blade-Transcripts_Root-Transcripts_Flower" +
+            "-Transcripts_Seed-Transcripts_mtg-Gene_Models-mt_fgenesh-genemarkHMM-genscan-fgenesh-TC_poplar" +
+            "-TC_maize-TC_arabidopsis-TC_Lotus-TC_soybean-TC_cotton-TC_medicago-TC_rice-TC_sorghum;" +
             "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
-    end 
+    end
 
     #
     # Format url for Medicago truncatula build 3.5.1.
@@ -150,21 +150,21 @@ module Experts
     def self.get_mt_3_5_1_medicago_url(ref, display_a, display_b, hit_from, hit_to, query)
       ref = format_ref(ref, "medicago")
 
-      # gbrowse instance will not display our custom LIS Query track if start > stop. 
+      # gbrowse instance will not display our custom LIS Query track if start > stop.
       start, stop = format_start_stop(display_a, display_b)
 
-      url = "http://medtr.comparative-legumes.org/gb2/gbrowse/current/?ref=#{ref};start=#{start};" + 
-            "stop=#{stop};width=1024;version=100;flip=0;grid=1;" + 
+      url = "http://medtr.comparative-legumes.org/gb2/gbrowse/current/?ref=#{ref};start=#{start};" +
+            "stop=#{stop};width=1024;version=100;flip=0;grid=1;" +
             "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
-    end 
+    end
 
     #
     # Format url for Medicago truncatula HapMap.
     #
     def self.get_mt_hapmap_url(ref, display_a, display_b, hit_from, hit_to, query)
       ref = format_ref(ref, "hapmap")
-      url = "http://www.medicagohapmap.org/cgi-bin/gbrowse/mthapmap/?q=#{ref}:#{display_a}..#{display_b};" + 
-            "t=Genes+Transcript+ReadingFrame+Translation+SNP+SNP_HM005+CovU_HM005+SNP_HM006+CovU_HM006+SNP_HM029+CovU_HM029;" + 
+      url = "http://www.medicagohapmap.org/cgi-bin/gbrowse/mthapmap/?q=#{ref}:#{display_a}..#{display_b};" +
+            "t=Genes+Transcript+ReadingFrame+Translation+SNP+SNP_HM005+CovU_HM005+SNP_HM006+CovU_HM006+SNP_HM029+CovU_HM029;" +
             "c=1;add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
     end
 
@@ -173,7 +173,7 @@ module Experts
     #
     def self.get_mt_affy_url(ref)
       url = "http://bioinfo.noble.org/gene-atlas/v2/probeset.php?id=#{ref}&submit=Go"
-    end 
+    end
   end
 
   #
@@ -186,7 +186,7 @@ module Experts
     #
     # Process the blast hit data for Gm. Add each unique site to link out to in the tags array.
     # Note: seq_cat array index corresponds to the index of tag.
-    # 
+    #
     def self.process_gm_data(data)
       return data if data.blank?
 
@@ -202,8 +202,8 @@ module Experts
     #
     def self.get_gm_url(ref, display_a, display_b, hit_from, hit_to, query)
       ref = format_ref(ref, "soybase")
-      url = "http://soybase.org/gbrowse/cgi-bin/gbrowse/gmax1.01/?ref=#{ref};start=#{display_a};stop=#{display_b};" + 
-            "version=100;cache=on;drag_and_drop=on;show_tooltips=on;grid=on;" + 
+      url = "http://soybase.org/gbrowse/cgi-bin/gbrowse/gmax1.01/?ref=#{ref};start=#{display_a};stop=#{display_b};" +
+            "version=100;cache=on;drag_and_drop=on;show_tooltips=on;grid=on;" +
             "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
     end
 
@@ -226,7 +226,7 @@ module Experts
     #
     # Process the blast hit data for Lj. Add each unique site to link out to in the tags array.
     # Note: seq_cat array index corresponds to the index of tag.
-    # 
+    #
     def self.process_lj_data(data)
       return data if data.blank?
 
@@ -241,11 +241,11 @@ module Experts
     # Format url for Lotus japonicus.
     #
     def self.get_lj_url(ref, display_a, display_b, hit_from, hit_to, query)
-      # Lotus j. gbrowse instance will not display our custom LIS Query track if start > stop. 
+      # Lotus j. gbrowse instance will not display our custom LIS Query track if start > stop.
       start, stop = format_start_stop(display_a, display_b)
 
-      url = "http://gsv.kazusa.or.jp/cgi-bin/gbrowse/lotus/?ref=#{ref};start=#{start};stop=#{stop};" + 
-            "width=1024;version=100;label=contig-phase3-phase1%%2C2-annotation-GMhmm-GenScan-blastn-tigrgi-blastx-marker;" + 
+      url = "http://gsv.kazusa.or.jp/cgi-bin/gbrowse/lotus/?ref=#{ref};start=#{start};stop=#{stop};" +
+            "width=1024;version=100;label=contig-phase3-phase1%%2C2-annotation-GMhmm-GenScan-blastn-tigrgi-blastx-marker;" +
             "grid=on;add=#{ref}+LIS+LIS_Query_#{query}+#{hit_from}..#{hit_to}"
     end
   end
@@ -258,7 +258,7 @@ module Experts
     extend ExpertMethods
 
     #
-    # Process the blast hit data for Swiss Protein Data Bank. Add each unique site to 
+    # Process the blast hit data for Swiss Protein Data Bank. Add each unique site to
     # link out to in the tags array.
     # Note: seq_cat array index corresponds to the index of tag.
     #
@@ -277,7 +277,7 @@ module Experts
     #
     def self.get_swissprot_url(ref)
       url = "http://www.uniprot.org/uniprot/#{ref}"
-    end 
+    end
   end
 
   #
@@ -290,7 +290,7 @@ module Experts
     #
     # Process the blast hit data for Ca. Add each unique site to link out to in the tags array.
     # Note: seq_cat array index corresponds to the index of tag.
-    # 
+    #
     def self.process_ca_data(data)
       return data if data.blank?
 

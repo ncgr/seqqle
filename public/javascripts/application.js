@@ -5,7 +5,7 @@
 function addSequence(event) {
   // Grab the id of the event
   var id = Event.element(event).identify();
-	
+
   // Example sequences
   var dna = ">TOG900080\n" +
 			"TGATAGGATAATTCTAGACAAAACATTAGCCGATCAAGTGTCATCATGGAAAAGCAGCAGGGGCCTTAGTGATACAGTG" +
@@ -142,8 +142,8 @@ function addSequence(event) {
 			"AGACACACGATGAGTTAGACTTTGAATTCTTAGGTAATATAGCCGGAAAGCCTTGGAGGTTTCAGACAAACTTGTACGGC" +
 			"AATGGCAGCACCAACCGTGGCCGTGAGGAGCGGTACCGCCTCTGGTTTGATCCAACCAAGGGATTCCATAGATACAGCAT" +
 			"TCTATGGACAGCTAAGAACATCATATTTTACATAGATGAGGTTCCAATTAGAGAAATTATAAGAAGTGAAGAAATGGGAG" +
-			"CTGATTACCCAGCAAAGCCAATGGCATTATACGCCACAATATGGGATGCATCAAATTGGGCCACATCGGGTGGAAA"; 
-	
+			"CTGATTACCCAGCAAAGCCAATGGCATTATACGCCACAATATGGGATGCATCAAATTGGGCCACATCGGGTGGAAA";
+
   var peptide =">ADA84676.1 protein L-isoaspartyl methyltransferase 1 [Cicer arietinum]\n" +
 			"MEQYWSGSAINENKGMVENLQRYGIIKSSKVAETMEKIDRGLFVPNGVQPYIDSPMSIGYNATISAPHMHATCLQLLE" +
 			"NYLQPGMHALDVGSGTGYLTACFAMMVGPNGRAVGVEHIPELVSFSINNIEKSAAAPQLKDGSLSVHEGDGRQGWPEF" +
@@ -154,7 +154,7 @@ function addSequence(event) {
 			"DMVKLVRNCPPEFKEYYVQMNAAKRSQTPLPSQVKDDRIILDKTIADQVSTWKSRRGLTDKVVTDHACSGETCSYFKL" +
 			"GDVFVCEKTGNVHVCDDTCREVIMDPTNELLVCTISGHCFDRWLLPSEMEPDPDQQQGGLTDEAEPFMGSGRFARAYL" +
 			"LGYNCDDDKELEAALRFC";
-	
+
   if (id == "dna") {
 	  $('seqqle_seq_type_nucleic_acid').checked = true;
 	  $('seqqle_seq').value = dna;
@@ -182,9 +182,9 @@ function hideAccordions () {
 Effect.Accordion = function (contentId) {
   var slideDown = 0;
   var slideUp = 0;
-    
+
   contentId = $(contentId);
-    
+
   text = ["More Results [+]", "Close [-]"];
   contentLinkId = contentId.identify() + '_toggle';
 
@@ -199,7 +199,7 @@ Effect.Accordion = function (contentId) {
 
 /*
  * Registers a callback which copies the csrf token into the
- * X-CSRF-Token header with each ajax request.  Necessary to 
+ * X-CSRF-Token header with each ajax request.  Necessary to
  * work with rails applications which have fixed
  * CVE-2011-0447
 */

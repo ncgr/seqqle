@@ -5,10 +5,10 @@ class SeqqleHit < ActiveRecord::Base
 
   # Genomes and regex
   GENOMES = {
-    "gm" => /gm[0-9]+/, 
+    "gm" => /gm[0-9]+/,
     "mt" => /mt_3_5_1_chr[0-9]/,        # Default to mt3.5.1
-    "mt3.0" => /mt_3_0_chr[0-9]/, 
-    "mt3.5.1" => /mt_3_5_1_chr[0-9]/, 
+    "mt3.0" => /mt_3_0_chr[0-9]/,
+    "mt3.5.1" => /mt_3_5_1_chr[0-9]/,
     "lj" => /lj_chr[0-9]/,
     "all" => /./
   }.freeze
@@ -26,7 +26,7 @@ class SeqqleHit < ActiveRecord::Base
   #
   def self.get_hits_for_gff_by_params(id, genomes = nil, query = nil)
     return nil unless id > 0
-  
+
     order = "bit_score DESC"
 
     if genomes.blank? && query.blank?
@@ -49,7 +49,7 @@ class SeqqleHit < ActiveRecord::Base
 
       return [] if arr.empty?
 
-      # Return all results. 
+      # Return all results.
       return ret if arr.include?("all")
 
       ret = []

@@ -18,7 +18,7 @@ module System
     #
     # Number of processors in use based on /proc/PID/stat values
     # state(2) and processor(38). Man proc for more information.
-    #	
+    #
     def processors_in_use
       procs = []
       Dir.glob("/proc/*/stat") do |filename|

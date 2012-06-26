@@ -1,9 +1,9 @@
 <% form_for(@seqqle, :html => {:id => "searchForm", :multipart => true}) do |f| %>
 	<div>
 		<span class="radio-form">
-			Query sequences are 
-			<%= f.radio_button :seq_type, 'nucleic_acid', :checked => true %> Nucleic Acid 
-			<%= f.radio_button :seq_type, 'amino_acid' %> Peptide 
+			Query sequences are
+			<%= f.radio_button :seq_type, 'nucleic_acid', :checked => true %> Nucleic Acid
+			<%= f.radio_button :seq_type, 'amino_acid' %> Peptide
 			&nbsp;&nbsp;
 			<a id="dna">cDNA Example</a>
 			&nbsp;&nbsp;
@@ -21,7 +21,7 @@
 	</div>
 	<div id="spinner" style="display: none;">
 		<p><strong>Searching...</strong> <img alt="" src="/images/loading.gif" /></p>
-	</div>	
+	</div>
 <% end %>
 <hr />
 <div id="description">
@@ -41,7 +41,7 @@
 		<li><a href="http://medicagohapmap.org" target="_blank">Medicago truncatula HapMap GBrowse</a>,</li>
 		<li><a href="http://mtgea.noble.org/v2" target="_blank">Noble Foundation Medicago truncatula Gene Expression Atlas</a>,</li>
 		<li><a href="http://uniprot.org" target="_blank">UniProt</a>.</li>
-	</ul> 
+	</ul>
 </div>
 
 <script type="text/javascript">
@@ -49,18 +49,18 @@
 	/** Form Events **/
 	$('dna').observe('click', addSequence);
 	$('peptide').observe('click', addSequence);
-	
+
 	// Hide the spinner on exit.
 	document.observe('unload', function() {
 		$('spinner').show().setStyle({display: 'none'});
 	});
-	
+
 	// Resets the form
 	$('reset').observe('click', function() {
 		var textInputFields = ["seqqle_seq", "seqqle_seq_file"];
 		textInputFields.each(Form.Element.clear);
 	});
-	
+
 	// Submits the form
 	$('submit').observe('click', function() {
 		$('spinner').show().setStyle({display: 'block'});

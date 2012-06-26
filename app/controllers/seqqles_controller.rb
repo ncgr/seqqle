@@ -28,9 +28,9 @@ class SeqqlesController < ApplicationController
       @seqqle.seq_file = nil
     end
 
-    # If the user uploads data that is not valid UTF-8 (ex: Word Doc, Excel File, etc.), 
-    # u_unpack raises an expection. 
-    begin 
+    # If the user uploads data that is not valid UTF-8 (ex: Word Doc, Excel File, etc.),
+    # u_unpack raises an expection.
+    begin
       ActiveSupport::Multibyte::Chars.u_unpack(@seqqle.seq)
     rescue Exception => e
       puts e.message
@@ -93,19 +93,19 @@ class SeqqlesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { 
-        get_hits(count) 
-      }
-      format.xml { 
+      format.html {
         get_hits(count)
-        render :xml => params[:query] ? @hits : SeqqleReport.get_descriptions(SeqqleReport.get_reports_by_seqqle_id(@seqqle.id)) 
-      } 
-      format.json { 
-        get_hits(count)
-        render :json => params[:query] ? @hits : SeqqleReport.get_descriptions(SeqqleReport.get_reports_by_seqqle_id(@seqqle.id)) 
       }
-      format.gff { 
-        render :text => write_gff(SeqqleHit.get_hits_for_gff_by_params(@seqqle.id, params[:genomes], params[:query])) 
+      format.xml {
+        get_hits(count)
+        render :xml => params[:query] ? @hits : SeqqleReport.get_descriptions(SeqqleReport.get_reports_by_seqqle_id(@seqqle.id))
+      }
+      format.json {
+        get_hits(count)
+        render :json => params[:query] ? @hits : SeqqleReport.get_descriptions(SeqqleReport.get_reports_by_seqqle_id(@seqqle.id))
+      }
+      format.gff {
+        render :text => write_gff(SeqqleHit.get_hits_for_gff_by_params(@seqqle.id, params[:genomes], params[:query]))
       }
     end
   end
@@ -113,21 +113,21 @@ class SeqqlesController < ApplicationController
   private
 
   #
-  # Executes blast on a given dataset based on sequence type. 
-  # 
+  # Executes blast on a given dataset based on sequence type.
+  #
   def search(id, hash)
     res = 75        # Search param(s) was/were not properly set or SSH failed.
 
     return res if id <= 0 || hash.empty?
 
     # run-blast command
-    cmd = "#{BLAST_INFO['script']} -i #{id} -g #{hash} -e #{RAILS_ENV} " + 
-      "-l #{BLAST_INFO['log_dir']} " + 
-      "-d #{ActiveRecord::Base.configurations[RAILS_ENV]['database']} " + 
-      "-k #{ActiveRecord::Base.configurations[RAILS_ENV]['host']} " + 
-      "-u #{ActiveRecord::Base.configurations[RAILS_ENV]['username']} " + 
+    cmd = "#{BLAST_INFO['script']} -i #{id} -g #{hash} -e #{RAILS_ENV} " +
+      "-l #{BLAST_INFO['log_dir']} " +
+      "-d #{ActiveRecord::Base.configurations[RAILS_ENV]['database']} " +
+      "-k #{ActiveRecord::Base.configurations[RAILS_ENV]['host']} " +
+      "-u #{ActiveRecord::Base.configurations[RAILS_ENV]['username']} " +
       "-p #{ActiveRecord::Base.configurations[RAILS_ENV]['password']} " +
-      "-b #{BLAST_INFO['blast_db']} -t #{BLAST_INFO['threads']} " + 
+      "-b #{BLAST_INFO['blast_db']} -t #{BLAST_INFO['threads']} " +
       "-c #{BLAST_INFO['blast_cmd']} -s #{BLAST_INFO['num_swissprot']}"
 
     # Optional args
@@ -142,7 +142,7 @@ class SeqqlesController < ApplicationController
       Net::SSH.start(BLAST_INFO['host'], BLAST_INFO['user']) do |ssh|
         ssh.open_channel do |ch|
           ch.exec(cmd) do |ch, success|
-            unless success 
+            unless success
               puts "Channel exec() failed. :("
             else
               # Read the exit status of the remote process.
@@ -175,7 +175,7 @@ class SeqqlesController < ApplicationController
         @hits = SeqqleReport.get_descriptions(
           SeqqleReport.find_by_params(@seqqle.id, params[:sort], params[:direction], @paginate, params[:page])
         )
-      end 
+      end
     else
       # View the selected query form a multi-query display.
       conditions = "AND query = '#{params[:query]}'"
@@ -201,7 +201,7 @@ class SeqqlesController < ApplicationController
   end
 
   #
-  # Helper method to format @hits for multiple queries. 
+  # Helper method to format @hits for multiple queries.
   #
   def format_multi_queries
     @hits = SeqqleReport.get_descriptions(
@@ -229,5 +229,5 @@ class SeqqlesController < ApplicationController
 
     queries = references = nil
   end
-  
+
 end

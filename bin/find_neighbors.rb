@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Find Neighbors 
+# Find Neighbors
 #
 # Author: Ken Seal - NCGR
 #
@@ -13,9 +13,9 @@ class FindNeighbors
 
   # Genome regex
   GENOMES = [
-    /gm[0-9]+/, 
-    /mt_3_0_chr[0-9]/, 
-    /mt_3_5_1_chr[0-9]/, 
+    /gm[0-9]+/,
+    /mt_3_0_chr[0-9]/,
+    /mt_3_5_1_chr[0-9]/,
     /lj_chr[0-9]/
   ]
 
@@ -38,14 +38,14 @@ class FindNeighbors
     # @data indecies
     @query    = 0
     @hit      = 1
-    @hit_from = 8 
+    @hit_from = 8
     @hit_to   = 9
 
     parse_data
   end
 
   #
-  # Parse the array of arrays to find the range of indecies for 
+  # Parse the array of arrays to find the range of indecies for
   # Array#values_at. Data passed to parse_data is pre sorted on @hit.
   #
   def parse_data
@@ -55,7 +55,7 @@ class FindNeighbors
     for i in 0...@data.length
       @data[i].chomp!
       line = @data[i].split('	')
-      # If the hit is to a genome, add the array indecies to @values_at 
+      # If the hit is to a genome, add the array indecies to @values_at
       # or append a tab to the line.
       if is_hit_to_genome?(line[1].split(':').last)
         if line[1].split(':').last != hit
@@ -74,7 +74,7 @@ class FindNeighbors
 
     # Bypass execute_find_neighbors helper.
     spawn_threads(@values_at)
-    
+
     write_results_to_file
   end
 
@@ -104,7 +104,7 @@ class FindNeighbors
     # To use recursion or not to use recursion?
     if num_cmds > limit
       @increment = limit # spwan_threads_in_batch increment value.
-      spawn_threads_in_batch(0, limit, @values_at)		
+      spawn_threads_in_batch(0, limit, @values_at)
     else
       spawn_threads(@values_at)
     end
@@ -126,8 +126,8 @@ class FindNeighbors
   def spawn_threads(arr)
     threads = []
     arr.each do |c|
-      # Execute find_neighbors on the original array of arrays 
-      # using Array#vlaues_at. 
+      # Execute find_neighbors on the original array of arrays
+      # using Array#vlaues_at.
       threads << Thread.new {find_neighbors(@data.values_at(eval(c)))}
     end
     # Wait for every Thread to finish working.
@@ -135,10 +135,10 @@ class FindNeighbors
   end
 
   #
-  # Method to find blast hit neighbors (transitive closure) on the same chromosome. 
+  # Method to find blast hit neighbors (transitive closure) on the same chromosome.
   #
-  # This method checks to see if two hit_from / hit_to pairs completely overlap, partially overlap 
-  # or if the ends of each hit pair are within threshold of one another. If so, store the data to 
+  # This method checks to see if two hit_from / hit_to pairs completely overlap, partially overlap
+  # or if the ends of each hit pair are within threshold of one another. If so, store the data to
   # present it to the user as a multi-hit link to gbrowse.
   #
   def find_neighbors(data)
@@ -150,7 +150,7 @@ class FindNeighbors
     copy = data.clone
 
     # Loop over datasets to find neighbors if they share the same tag (chromosome).
-    # Note: the datasets are identical (copy = data) so we call next if i == k. 
+    # Note: the datasets are identical (copy = data) so we call next if i == k.
     for i in 0...copy.length
       cline       = copy[i].split('	')
       copy_tag    = cline[@hit].split(':').last
@@ -187,11 +187,11 @@ class FindNeighbors
           else
           # Check to see if the ends are within threshold of each other if all else fails.
             nums = []
-            nums << (copy_last - data_first) 
+            nums << (copy_last - data_first)
             nums << (data_last - copy_first)
 
-            # Valid negative numbers generated here should be caught in the overlap checks above. 
-            # Otherwise, they can report false positives (ex: (-threshold - 1)). 
+            # Valid negative numbers generated here should be caught in the overlap checks above.
+            # Otherwise, they can report false positives (ex: (-threshold - 1)).
             nums.delete_if {|n| n < 0}
 
             min = nums.min
@@ -209,7 +209,7 @@ class FindNeighbors
       # Add the neighbors.
       data[i] << "\t" << neighbors
     end
-  end 
+  end
 
   #
   # Write results to file.

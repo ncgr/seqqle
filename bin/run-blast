@@ -6,11 +6,11 @@
 #
 # Author:   Ken Seal - NCGR
 #
-# Purpose:  Execute blast on a dataset retrieved from the MySQL table seqqles 
+# Purpose:  Execute blast on a dataset retrieved from the MySQL table seqqles
 #           and store the blast result set in the table seqqle_hits. See the MySQL
-#           database seqqle_core and the Rails app seqqle for more information. 
+#           database seqqle_core and the Rails app seqqle for more information.
 #
-#           If the script generates a non-zero exit status, the error is logged 
+#           If the script generates a non-zero exit status, the error is logged
 #           in $LOG_FILE.
 #
 #           This script executes the pre processing code for seqqle.
@@ -63,68 +63,68 @@ NA="nucleic_acid"
 function validate_params() {
     if [[ ! $ID =~ [[:digit:]] ]]; then
         echo "$(basename $0) -i expects a digit -- value received: $ID" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $HASH =~ [[:alnum:]][[:punct:]] ]]; then
         echo "$(basename $0) -g expects a hash string -- value received: $HASH" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $ENV =~ [[:alpha:]] ]]; then
         echo "$(basename $0) -e expects a string -- value received: $ENV" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! -d $LOG_DIR ]]; then
         echo "$(basename $0) -l expects a dirctory -- value received: $LOG_DIR" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $DB =~ [[:alpha:]][[:punct:]] ]]; then
         echo "$(basename $0) -d expects a string -- value received: $DB" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $DB_HOST =~ [[:alnum:]][[:punct:]] ]]; then
         echo "$(basename $0) -k expects an IP or domain -- value received: $DB_HOST" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $DB_USER =~ [[:alpha:]][[:punct:]] ]]; then
         echo "$(basename $0) -u expects a string -- value received: $DB_USER" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ -z $DB_PASS ]]; then
         echo "$(basename $0) -p expects a string -- value received: $DB_PASS" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! -d $BLAST_DB ]]; then
         echo "$(basename $0) -b expects a dirctory -- value received: $BLAST_DB" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $THREADS =~ [[:digit:]] ]]; then
         echo "$(basename $0) -t expects a digit -- value received: $THREADS" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ $BLAST_CMD -gt 2 || $BLAST_CMD -lt 1 ]]; then
         echo "$(basename $0) -c expects a 1 or 2 -- value received: $BLAST_CMD" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
     if [[ ! $SWISSPROT =~ [[:digit:]] ]]; then
         echo "$(basename $0) -s expects a digit -- value received: $SWISSPROT" >&2
-        exit $INVALID_PARAMS  
+        exit $INVALID_PARAMS
     fi
 
-    if [[ -n $FIND_NEIGHBORS_THRESHOLD ]]; then 
+    if [[ -n $FIND_NEIGHBORS_THRESHOLD ]]; then
         if [[ ! $FIND_NEIGHBORS_THRESHOLD =~ [[:digit:]] ]]; then
             echo "$(basename $0) -f expects a digit -- value received: $FIND_NEIGHBORS_THRESHOLD" >&2
-            exit $INVALID_PARAMS 
+            exit $INVALID_PARAMS
         fi
     fi
 }
@@ -137,11 +137,11 @@ function usage() {
 cat <<-'USAGE'
     Seqqle Run Blast
 
-    usage: run-blast: -i database record id -g hash -e environment 
+    usage: run-blast: -i database record id -g hash -e environment
         -l path to log file -d database -k database host -u database user
-        -p database pass -b path to blast database -t number of threads 
-        -c blast command -s number swissprot hits [-f find_neighbors threshold] 
-	 
+        -p database pass -b path to blast database -t number of threads
+        -c blast command -s number swissprot hits [-f find_neighbors threshold]
+
     -i database record id          Primary ID for database lookup.
     -g hash                        Hash to ensure unique filename.
     -e environment                 Rails environment - development or production.
@@ -187,7 +187,7 @@ function exit_on_error() {
     LOGFILE=${TMP_DIR}run-blast.log
 	rm ${TMP_DIR}${HASH}*
 	echo "`date`	ERROR #${EXIT_VAL}" >> $LOGFILE
-	exit $EXIT_VAL 
+	exit $EXIT_VAL
 }
 
 ##
@@ -195,7 +195,7 @@ function exit_on_error() {
 #
 function check_binaries() {
     binaries=( seqret mysql jruby blastall tblastn blastp blastn blastx )
-    
+
     # Check binaries per blast cmd.
     if [ $BLAST_CMD == 1 ]; then
         unset binaries[4]
@@ -221,7 +221,7 @@ function check_binaries() {
 function execute_blastall() {
 	# Command to execute blast for amino acids.
 	if [ $TYPE == $AA ]; then
-		
+
 		# Blast aa sequence against nt targets.
 		cat ${TMP_DIR}${HASH}.fa | blastall \
 			-p tblastn \
@@ -230,7 +230,7 @@ function execute_blastall() {
 			-a $THREADS \
 			-m 8 \
 			-e 0.5e-10 > ${TMP_DIR}${HASH}.rep & \
-		
+
 		# Blast aa sequence against aa targets.
 		cat ${TMP_DIR}${HASH}.fa | blastall \
 			-p blastp \
@@ -240,10 +240,10 @@ function execute_blastall() {
 			-m 8 \
 			-e 0.5e-10 > ${TMP_DIR}${HASH}-swiss
 	fi
-	
+
 	# Command to execute blast for nucleic acids.
 	if [ $TYPE == $NA ]; then
-		
+
 		# Blast nt sequence against nt targets.
 		cat ${TMP_DIR}${HASH}.fa | blastall \
 			-p blastn \
@@ -252,7 +252,7 @@ function execute_blastall() {
 			-a $THREADS  \
 			-m 8 \
 			-e 0.5e-20 > ${TMP_DIR}${HASH}.rep & \
-		
+
 		# Blast nt sequence against aa targets.
 		cat ${TMP_DIR}${HASH}.fa | blastall \
 	       	-p blastx \
@@ -265,7 +265,7 @@ function execute_blastall() {
 
 	wait $!
 
-	top_swissprot_hits	
+	top_swissprot_hits
 
     check_blast_results
 }
@@ -277,28 +277,28 @@ function execute_blastall() {
 #
 function top_swissprot_hits() {
 	if [ -s ${TMP_DIR}${HASH}-swiss ]; then
-		
+
 		# Grab the first query.
 		query="`head -n1 ${TMP_DIR}${HASH}-swiss | awk -F"\t" '{ print $1 }'`"
-	
+
 		i=0
 		# Loop through the file and add the hits by bit score to .rep.
 		cat ${TMP_DIR}${HASH}-swiss | while read line; do
 	   		# Current line query id.
 	   		l_query="`echo $line | awk '{ print $1 }'`"
-	
+
 	   		# If the query ids match, store the line.
 	   		if [[ $query == $l_query ]]; then
-	   			let "i += 1"	
+	   			let "i += 1"
 				if [ $i -le $SWISSPROT ]; then
 					echo $line >> ${TMP_DIR}${HASH}.rep
 				fi
-	
+
 	   		# Update vars and grab the first line of the next query.
 	   		else
 	   			query=$l_query
 				i=0
-	   			let "i += 1"	
+	   			let "i += 1"
 				echo $line >> ${TMP_DIR}${HASH}.rep
 	   		fi
 		done
@@ -311,7 +311,7 @@ function top_swissprot_hits() {
 function execute_blastplus() {
 	# Command to execute blast for amino acids.
 	if [ $TYPE == $AA ]; then
-	
+
 		# Blast aa sequence against nt targets.
 		tblastn \
 			-db "${tblastn[*]}" \
@@ -320,7 +320,7 @@ function execute_blastplus() {
 			-num_threads $THREADS  \
 			-evalue 0.5e-10 \
 			-out ${TMP_DIR}${HASH}.rep & \
-	
+
 		# Blast aa sequence against aa targets.
 		blastp \
 			-db "${blastp[*]}" \
@@ -330,9 +330,9 @@ function execute_blastplus() {
 			-evalue 0.5e-10 \
 			-max_target_seqs $SWISSPROT \
 			-out ${TMP_DIR}${HASH}-swiss
-		
+
 	fi
-	
+
 	# Command to execute blast for nucleic acids.
 	if [ $TYPE == $NA ]; then
 
@@ -344,7 +344,7 @@ function execute_blastplus() {
 			-num_threads $THREADS \
 			-evalue 0.5e-20 \
 			-out ${TMP_DIR}${HASH}.rep & \
-	
+
 		# Blast nt sequence against aa targets.
 		blastx \
 			-db "${blastx[*]}" \
@@ -354,11 +354,11 @@ function execute_blastplus() {
 			-evalue 0.5e-20 \
 			-max_target_seqs $SWISSPROT \
 			-out ${TMP_DIR}${HASH}-swiss
-	
+
 	fi
 
 	wait $!
-	
+
 	# Combine datasets
 	cat ${TMP_DIR}${HASH}-swiss >> ${TMP_DIR}${HASH}.rep
 
@@ -385,21 +385,21 @@ function check_blast_results() {
 function format_and_insert_data() {
 
 	cat ${TMP_DIR}${HASH}.neighbors | awk '{
-		{ 
+		{
 			print "INSERT into seqqle_hits (seqqle_id, query, hit, percent, alignment_len, \
-			query_from, query_to, hit_from, hit_to, e_val, bit_score, neighbors) values ('$ID',"; 
-		} 
-		{ 
+			query_from, query_to, hit_from, hit_to, e_val, bit_score, neighbors) values ('$ID',";
+		}
+		{
 			gsub(/[,]/, "-", $1);
 			if ( $1 ~ /EMBOSS_[0-9]*/ )
-				$1 = "Local" 
+				$1 = "Local"
 		}
-		{ 
+		{
 			printf "\"%s\", \"%s\", %.2f, %d, %d, %d, %d, %d, %d, %d, \"%s\"", \
                 $1, $2, $3, $4, $7, $8, $9, $10, $11, $12, $13
 		}
-		{ 
-			print ");"; 
+		{
+			print ");";
 		}
 	}' | mysql -h$DB_HOST -u$DB_USER -p$DB_PASS $DB
 
@@ -420,64 +420,64 @@ function run_blast() {
 	if [ $ENV == "development" ]; then
 	    start_time=`date +%s.%N`
 	fi
-	
+
 	### Edit the arrays below for custom setup --------------------------------------###
 	#
 	# NOTE: Do not change $BLAST_DB.
 	#
 	## Blast DB ##
-	tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\ 
+	tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
 	    $BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target )
 	blastp=( $BLAST_DB/swissprot_viridiplantae )
 	blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
 		$BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target $BLAST_DB/ca_transcripts )
 	blastx=( $BLAST_DB/swissprot_viridiplantae )
-	
+
 	### End Edit --------------------------------------------------------------------###
-	
+
 	# Query data
 	qry="SELECT seqqles.seq, seqqles.seq_type FROM seqqles WHERE id = '$ID'"
 	echo $qry | mysql --batch -h$DB_HOST -u$DB_USER -p$DB_PASS $DB > ${TMP_DIR}${HASH}
-	
+
 	# Make sure our SQL executed successfully.
 	if [[ ! -s ${TMP_DIR}${HASH} || $? -gt 0 ]]; then
 		EXIT_VAL=$MYSQL_ERR
 		exit_on_error
 	fi
-	
+
 	# Read the MySQL dataset and set the sequence type.
 	TYPE=`tail -1 ${TMP_DIR}${HASH} | awk -F"\t" '{ print $2 }'`
-	
+
 	if [ -z $TYPE ]; then
 		EXIT_VAL=$TYPE_ERR
 		exit_on_error
 	fi
-	
+
 	# Read the MySQL dataset and write the sequence to file.
-	tail -1 ${TMP_DIR}${HASH} | sed -e's/\\n/\n/g' -e's/\\r//g' | awk -F"\t" '{ print $1 }' > ${TMP_DIR}${HASH}.seq 
-	
+	tail -1 ${TMP_DIR}${HASH} | sed -e's/\\n/\n/g' -e's/\\r//g' | awk -F"\t" '{ print $1 }' > ${TMP_DIR}${HASH}.seq
+
 	# Make sure ${TMP_DIR}${HASH}.seq is set.
 	if [ ! -s ${TMP_DIR}${HASH}.seq ]; then
 		EXIT_VAL=$SEQ_EMPTY
 		exit_on_error
 	fi
-	
+
 	# Force FASTA format.
 	seqret -filter -sformat pearson -osformat fasta < ${TMP_DIR}${HASH}.seq > ${TMP_DIR}${HASH}.fa
-	
+
 	# If the FASTA sequence is not set, log the error and exit.
 	if [[ $? -gt 0 || ! -s ${TMP_DIR}${HASH}.fa ]]; then
 		EXIT_VAL=$FASTA_ERROR
 		exit_on_error
 	fi
-	
+
 	# Execute Blast command
 	if [ $BLAST_CMD == 1 ]; then
 		execute_blastall
 	elif [ $BLAST_CMD == 2 ]; then
 		execute_blastplus
 	fi
-	
+
     # Sort results for find_neighbors
     sort -t$'\t' -k2 ${TMP_DIR}${HASH}.rep > ${TMP_DIR}${HASH}.sorted
 
@@ -494,9 +494,9 @@ function run_blast() {
 
 	# Format and INSERT data.
 	format_and_insert_data
-	
+
 	rm ${TMP_DIR}${HASH}*
-	
+
 	# Script execution time for dev.
 	if [ $ENV == "development" ]; then
 		end_time=`date +%s.%N`
@@ -522,9 +522,9 @@ while getopts ':i:g:e:l:d:k:u:p:b:t:c:s:f:h' OPTION; do
         ;;
     d)  DB="$OPTARG"
         ;;
-    k)  DB_HOST="$OPTARG"  
+    k)  DB_HOST="$OPTARG"
         ;;
-    u)  DB_USER="$OPTARG"  
+    u)  DB_USER="$OPTARG"
         ;;
     p)  DB_PASS="$OPTARG"
         ;;

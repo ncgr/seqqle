@@ -48,7 +48,7 @@ module DataExport
       query_from = data[i].query_from
       query_to   = data[i].query_to
 
-      str =  "#{hit}\t#{source}\t#{type}\t#{start}\t#{stop}\t#{e_val}\t#{strand}\t#{phase}\t" + 
+      str =  "#{hit}\t#{source}\t#{type}\t#{start}\t#{stop}\t#{e_val}\t#{strand}\t#{phase}\t" +
              "Target=#{query} #{query_from} #{query_to};Note=Build #{build};Name=#{query}\n"
       gff << str
     end

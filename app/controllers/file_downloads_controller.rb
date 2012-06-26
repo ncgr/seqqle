@@ -10,8 +10,8 @@ class FileDownloadsController < ApplicationController
     # Render Ajax form if params are nil.
     if params[:file_download].nil?
       @file_download = FileDownload.new
-      session[:id] = params[:id] 
-      session[:filename] = params[:filename] 
+      session[:id] = params[:id]
+      session[:filename] = params[:filename]
       params[:id] = params[:filename] = nil
       render "index.html.erb", :layout => false
       # Send data

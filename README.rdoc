@@ -1,7 +1,9 @@
 == Seqqle
 
-Seqqle is a Ruby on Rails 2.3.11 application that accepts nucleic and amino acid sequences, executes NCBI Blast 
+Seqqle is a Ruby on Rails 2.3.11 application that accepts nucleic and amino acid sequences, executes NCBI Blast
 and displays formatted Blast results.
+
+For Rails >= 3.1 applications, we recommend the {Quorum}[https://github.com/ncgr/quorum] gem.
 
 == Information
 
@@ -32,8 +34,8 @@ populate the settings.
 
   cp RAILS_ROOT/config/blast_settings_example/blast_settings.yml RAILS_ROOT/config/blast_settings.yml
 
-NOTE: 
-If you choose to execute bin/run-blast remotely via SSH, make sure the dependancies listed above 
+NOTE:
+If you choose to execute bin/run-blast remotely via SSH, make sure the dependancies listed above
 (Emboss, MySQL, NCBI Blast) are exported in the remote machine's .bashrc file. Otherwise
 run-blast will return error code 73 (binary not found).
 
@@ -44,7 +46,7 @@ file to customize your application.
 
 === Configure your Blastall database and populate your tables
 
-Seqqle expects the following data format in your Blast database as well as the tables targets and 
+Seqqle expects the following data format in your Blast database as well as the tables targets and
 target_elements.
 
 Example FASTA header ready for blastall makeblastdb.
@@ -53,8 +55,8 @@ Example FASTA header ready for blastall makeblastdb.
 OR an actual example for Medicago truncatula.
   >mt_genome_3_0:mt_3_0_chr1
 
-In our case, target equals the genome build and target_element equals chromosome location. Once the raw 
-sequence data has been reformatted, make the blastall database and add the targets and target_elements 
+In our case, target equals the genome build and target_element equals chromosome location. Once the raw
+sequence data has been reformatted, make the blastall database and add the targets and target_elements
 to their respective tables.
 
 ** Load the SQL file db/seqqle.sql into your database to view sample data. **
@@ -68,7 +70,7 @@ directories.
 
 NOTE: Do not change $BLAST_DB.
 
-  tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\ 
+  tblastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
     $BLAST_DB/lj_genome $BLAST_DB/mt_affy_genechip_target )
   blastp=( $BLAST_DB/swissprot_viridiplantae )
   blastn=( $BLAST_DB/gm_genome $BLAST_DB/mt_3_0_genome $BLAST_DB/mt_3_5_1_genome\
@@ -90,7 +92,7 @@ For more information on destinations, see the Module Experts under lib.
 === Configure Experts
 
 The Experts module under lib/ will need to be altered for your specific environment. Each class in this module
-contains species specific methods to process data and generate URLs to GBrowse instances. Use the classes in 
+contains species specific methods to process data and generate URLs to GBrowse instances. Use the classes in
 the module as a guideline.
 
 The classes in the Experts module are called from the following files:

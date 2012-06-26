@@ -6,22 +6,22 @@ class Seqqle < ActiveRecord::Base
   has_many :seqqle_hits, :dependent => :destroy
   has_many :seqqle_reports, :dependent => :destroy
 
-  validates_length_of :seq, 
+  validates_length_of :seq,
     :minimum => 20,
     :allow_blank => true
-  validates_format_of :seq_type, 
+  validates_format_of :seq_type,
     :with => /[a-z_]+/,
     :message => " - Please select a valid sequence type.",
     :allow_blank => false
-  validates_length_of :seq_file, 
-    :minimum => 3, 
+  validates_length_of :seq_file,
+    :minimum => 3,
     :allow_blank => true
 
-  # Run-blast and seqqle error code messages. 
+  # Run-blast and seqqle error code messages.
   # See bin/run-blast for numeric error codes.
   ERROR_MESSAGES = {
-    65 => "Your search returned error code 65.", 
-    66 => "Your search returned error code 66.", 
+    65 => "Your search returned error code 65.",
+    66 => "Your search returned error code 66.",
     67 => "Your search returned error code 67.",
     68 => "Your search returned 0 hits.",
     69 => "Your search returned error code 69.",
@@ -39,8 +39,8 @@ class Seqqle < ActiveRecord::Base
   # Blast db species. If another species is added to the
   # blast target db, update it here.
   SPECIES = {
-    "mt" => "Medicago truncatula", 
-    "lj" => "Lotus japonicus", 
+    "mt" => "Medicago truncatula",
+    "lj" => "Lotus japonicus",
     "gm" => "Glycine max",
     "ca" => "Cicer arietinum",
     "sw" => "Viridiplantae"         # sw is for swissprot not a species.
@@ -107,12 +107,12 @@ class Seqqle < ActiveRecord::Base
       end
     end
   end
-  
+
   private
 
   #
   # Added validation to make sure the user doesn't try to enter both seq and seq_file,
-  # or leave them both blank. If that passes validation, check the byte size of the 
+  # or leave them both blank. If that passes validation, check the byte size of the
   # uploaded data.
   #
   def validate
@@ -132,16 +132,16 @@ class Seqqle < ActiveRecord::Base
   end
 
   #
-  # Validates size of the user's sequence(s) against max. 
+  # Validates size of the user's sequence(s) against max.
   # Max defaults to 50KB.
   #
   def validate_seq_size(str, file, max = nil)
     begin
       if (!str.blank?) && (!str.kind_of? String)
-        raise ArgumentError, 'validate_seq_size expects str to be a String.' 
+        raise ArgumentError, 'validate_seq_size expects str to be a String.'
       end
       if (!file.blank?) && (!File.exists? file)
-        raise ArgumentError, 'validate_seq_size expects file to be a File.' 
+        raise ArgumentError, 'validate_seq_size expects file to be a File.'
       end
     rescue Exception => e
       puts e.message

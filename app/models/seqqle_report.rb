@@ -90,7 +90,7 @@ class SeqqleReport < ActiveRecord::Base
     tag_element = hit.last
 
     Destination.first(:conditions => {:tag => tag}, :select => DESTINATION_DATA.join(", ")).attributes.each do |key, val|
-      data["destination_#{key}"] = val 
+      data["destination_#{key}"] = val
     end
     TargetElement.first(:conditions => {:tag => tag_element}, :select => ELEMENT_DATA.join(", ")).attributes.each do |key, val|
       data["element_#{key}"] = val

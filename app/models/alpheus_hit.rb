@@ -12,7 +12,7 @@ class AlpheusHit < ActiveRecord::Base
     if info.blank?
       return nil
     else
-      info.ref_id 
+      info.ref_id
     end
   end
 end
