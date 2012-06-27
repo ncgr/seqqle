@@ -159,7 +159,7 @@ module Experts
       # gbrowse instance will not display our custom LIS Query track if start > stop.
       start, stop = format_start_stop(display_a, display_b)
 
-      url = "http://medtr.comparative-legumes.org/gb2/gbrowse/current/?ref=#{ref};start=#{start};" +
+      url = "http://medtr.comparative-legumes.org/gb2/gbrowse/3.5.1/?ref=#{ref};start=#{start};" +
             "stop=#{stop};width=1024;version=100;flip=0;grid=1;" +
             "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
     end
@@ -345,7 +345,7 @@ module Experts
       # gbrowse instance will not display our custom LIS Query track if start > stop.
       start, stop = format_start_stop(display_a, display_b)
 
-      url = "http://cajca.comparative-legumes.org/gb2/gbrowse/current/?ref=#{ref};start=#{start};" +
+      url = "http://cajca.comparative-legumes.org/gb2/gbrowse/1.0/?ref=#{ref};start=#{start};" +
             "stop=#{stop};width=1024;version=100;flip=0;grid=1;" +
             "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
     end
