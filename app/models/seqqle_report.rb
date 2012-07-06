@@ -125,7 +125,6 @@ class SeqqleReport < ActiveRecord::Base
 
     data[:element_url]          = nil                   # Generic url - base url for each hit report
     data[:contin_url]           = nil                   # Continuous hit - base url + neighboring hits
-    data[:alpheus_url]          = nil                   # Alpheus url.
     data[:genome_build_version] = tag.split('@').first  # Build Version attribute for XML & JSON.
 
     # Format the appropriate url using an "expert."
@@ -136,8 +135,6 @@ class SeqqleReport < ActiveRecord::Base
     when "gm_genome_rel_1_01@soybase"
       data[:element_url] = Gm.get_gm_url(ref, display_a, display_b, hit_from, hit_to, query)
       data[:contin_url]  = get_continuous_url(data[:element_url], ref, query, neighbors)
-    when "gm_genome_rel_1_01@alpheus"
-      data[:alpheus_url] = Gm.get_gm_alpheus_url(data.ref_id, hit_from, hit_to)
     when "mt_genome_3_0@jcvi"
       data[:element_url] = Mt.get_mt_jcvi_url(ref, display_a, display_b, hit_from, hit_to, query)
       data[:contin_url]  = get_continuous_url(data[:element_url], ref, query, neighbors)
@@ -151,8 +148,6 @@ class SeqqleReport < ActiveRecord::Base
       data[:element_url] = Mt.get_mt_affy_url(tag_element)
     when "swissprot_viridiplantae_201011"
       data[:element_url] = Swissprot.get_swissprot_url(ref)
-    when "ca_transcripts_201006@alpheus"
-      data[:alpheus_url] = Ca.get_ca_alpheus_url(data.ref_id)
     when "cc_genome_1_0@lis"
       data[:element_url] = Cc.get_cc_url(ref, display_a, display_b, hit_from, hit_to, query)
       data[:contin_url]  = get_continuous_url(data[:element_url], ref, query, neighbors)

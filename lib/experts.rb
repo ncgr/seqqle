@@ -197,8 +197,8 @@ module Experts
       return data if data.blank?
 
       hits = data[:hit].split(':')
-      tags = ["#{hits[0]}@soybase:#{hits[1]}", "#{hits[0]}@alpheus:#{hits[1]}"]
-      seq_cat = [SEQUENCE_CATEGORIES[:gc], SEQUENCE_CATEGORIES[:gc]]
+      tags = ["#{hits[0]}@soybase:#{hits[1]}"]
+      seq_cat = [SEQUENCE_CATEGORIES[:gc]]
 
       process_data(data, tags, seq_cat)
     end
@@ -213,13 +213,6 @@ module Experts
             "add=#{ref}+LIS+LIS_Query_#{query}+#{hit_to}..#{hit_from}"
     end
 
-    #
-    # Format url for Alpheus instance.
-    #
-    def self.get_gm_alpheus_url(ref_id, hit_from, hit_to)
-      start, stop = format_start_stop(hit_from, hit_to)
-      url = "http://howlite-seed.ncgr.org/search-genomic-span.do?rsg_id=#{ref_id}&rsg_start=#{start}&rsg_stop=#{stop}"
-    end
   end
 
   #
@@ -283,35 +276,6 @@ module Experts
     #
     def self.get_swissprot_url(ref)
       url = "http://www.uniprot.org/uniprot/#{ref}"
-    end
-  end
-
-  #
-  # Cicer arietinum
-  #
-  class Ca
-
-    extend ExpertMethods
-
-    #
-    # Process the blast hit data for Ca. Add each unique site to link out to in the tags array.
-    # Note: seq_cat array index corresponds to the index of tag.
-    #
-    def self.process_ca_data(data)
-      return data if data.blank?
-
-      hits = data[:hit].split(':')
-      tags = ["#{hits[0]}@alpheus:#{hits[1]}"]
-      seq_cat = [SEQUENCE_CATEGORIES[:gc]]
-
-      process_data(data, tags, seq_cat)
-    end
-
-    #
-    # Format url for Alpheus instance.
-    #
-    def self.get_ca_alpheus_url(ref_id)
-      url = "http://bone.ncgr.org/transcript-detail.do?rst_id=#{ref_id}"
     end
   end
 

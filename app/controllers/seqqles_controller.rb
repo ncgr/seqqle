@@ -185,10 +185,11 @@ class SeqqlesController < ApplicationController
     end
     @base_url = request.url().split('?').first
 
-    @cmtv_all = URI.escape(@base_url + ".gff?genomes=gm,lj,mt3.5.1&query=#{params[:query]}", "?=&,") # CMTV All genomes
-    @cmtv_gm  = URI.escape(@base_url + ".gff?genomes=gm&query=#{params[:query]}", "?=&,")            # CMTV gm
-    @cmtv_lj  = URI.escape(@base_url + ".gff?genomes=lj&query=#{params[:query]}", "?=&,")            # CMTV lj
-    @cmtv_mt  = URI.escape(@base_url + ".gff?genomes=mt3.5.1&query=#{params[:query]}", "?=&,")       # CMTV mt
+    @cmtv_all = URI.escape(@base_url + ".gff?genomes=gm,lj,mt3.5.1,cc&query=#{params[:query]}", "?=&,") # CMTV All genomes
+    @cmtv_gm  = URI.escape(@base_url + ".gff?genomes=gm&query=#{params[:query]}", "?=&,")               # CMTV gm
+    @cmtv_lj  = URI.escape(@base_url + ".gff?genomes=lj&query=#{params[:query]}", "?=&,")               # CMTV lj
+    @cmtv_mt  = URI.escape(@base_url + ".gff?genomes=mt3.5.1&query=#{params[:query]}", "?=&,")          # CMTV mt
+    @cmtv_cc  = URI.escape(@base_url + ".gff?genomes=cc&query=#{params[:query]}", "?=&,")               # CMTV cc
 
     # GDE Gm view
     @gm = '#'

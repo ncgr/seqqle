@@ -42,7 +42,6 @@ class Seqqle < ActiveRecord::Base
     "mt" => "Medicago truncatula",
     "lj" => "Lotus japonicus",
     "gm" => "Glycine max",
-    "ca" => "Cicer arietinum",
     "sw" => "Viridiplantae",         # sw is for swissprot not a species.
     "cc" => "Cajanus cajan"
   }.freeze
@@ -74,9 +73,6 @@ class Seqqle < ActiveRecord::Base
       # Add the species.
       data[i][:species] = SPECIES[tag.slice(0, 2)]
 
-      # Add the alpheus ref_id.
-      data[i][:ref_id] = AlpheusHit.get_ref_id(data[i][:hit])
-
       res = {}
 
       # Pass the pre processed data off to the experts.
@@ -94,8 +90,6 @@ class Seqqle < ActiveRecord::Base
         res = Mt.process_gea_data(data[i])
       when "swissprot_viridiplantae_201011"
         res = Swissprot.process_swissprot_data(data[i])
-      when "ca_transcripts_201006"
-        res = Ca.process_ca_data(data[i])
       when "cc_genome_1_0"
         res = Cc.process_cc_data(data[i])
       end

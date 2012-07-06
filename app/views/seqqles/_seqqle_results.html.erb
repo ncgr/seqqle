@@ -40,9 +40,6 @@
 			<% unless data.contin_url.nil? %>
 				&nbsp;&mdash;&nbsp;<%= link_to "Show related queries", data.contin_url, :target => "_blank" %>
 			<% end %>
-			<% unless data.alpheus_url.nil? %>
-				Hit positions <%= link_to "#{data.hit_from}...#{data.hit_to}", data.alpheus_url, :target => "_blank" %>
-			<% end %>
 			<br />
 			<strong>Hit score <%= data.bit_score %>, Percent identity <%= data.percent.round(1) %>, Alignment length <%= data.alignment_len %></strong>
     </li>
